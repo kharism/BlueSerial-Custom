@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import com.blueserial.R;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -44,14 +45,16 @@ public class MainActivity extends Activity {
 	// All controls here
 	private TextView mTxtReceive;
 	private EditText mEditSend;
+	private EditText mValueRead;
 	private Button mBtnDisconnect;
 	private Button mBtnSend;
 	private Button mBtnClear;
 	private Button mBtnClearInput;
 	private ScrollView scrollView;
 	private CheckBox chkScroll;
+	private TextView mSatuan;
 	private CheckBox chkReceiveText;
-
+	private StringHandler strHandler;
 	private boolean mIsBluetoothConnected = false;
 
 	private BluetoothDevice mDevice;
@@ -79,11 +82,14 @@ public class MainActivity extends Activity {
 		mEditSend = (EditText) findViewById(R.id.editSend);
 		scrollView = (ScrollView) findViewById(R.id.viewScroll);
 		chkScroll = (CheckBox) findViewById(R.id.chkScroll);
+		mSatuan = (TextView)findViewById(R.id.satuan);
 		chkReceiveText = (CheckBox) findViewById(R.id.chkReceiveText);
 		mBtnClearInput = (Button) findViewById(R.id.btnClearInput);
-
+		mValueRead = (EditText)findViewById(R.id.valueRead);
 		mTxtReceive.setMovementMethod(new ScrollingMovementMethod());
-
+		strHandler = new StringHandler();
+		//mValueRead.setEnabled(false);
+		//mValueRead.setFocusable(false);
 		mBtnDisconnect.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -97,12 +103,16 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				try {
+				/*try {
 					mBTSocket.getOutputStream().write(mEditSend.getText().toString().getBytes());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
+				}*/
+				mValueRead.setEnabled(true);
+				mValueRead.setFocusable(true);
+				Log.println(BIND_IMPORTANT, UI_MODE_SERVICE, "ValueRead = "+mValueRead.isEnabled());
+				mValueRead.refreshDrawableState();
 			}
 		});
 
@@ -110,7 +120,8 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				mEditSend.setText("");
+				mIsUserInitiatedDisconnect = false;
+				new DisConnectBT().execute();
 			}
 		});
 		
@@ -164,7 +175,12 @@ public class MainActivity extends Activity {
 							mTxtReceive.post(new Runnable() {
 								@Override
 								public void run() {
-									mTxtReceive.append(strInput);
+									String h=strInput;
+									mTxtReceive.append(strInput+"\n");
+									//String[] read=strInput.split(" ");
+									
+									mValueRead.setText(strHandler.Handle(strInput));
+									mSatuan.setText(strHandler.getSatuan(strInput));
 									//Uncomment below for testing
 									//mTxtReceive.append("\n");
 									//mTxtReceive.append("Chars: " + strInput.length() + " Lines: " + mTxtReceive.getLineCount() + "\n");
@@ -277,6 +293,7 @@ public class MainActivity extends Activity {
 		super.onSaveInstanceState(outState);
 	}
 
+	@SuppressLint("NewApi")
 	private class ConnectBT extends AsyncTask<Void, Void, Void> {
 		private boolean mConnectSuccessful = true;
 

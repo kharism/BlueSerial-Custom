@@ -17,7 +17,7 @@
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="5"
-            android:text="Disconnect" />
+            android:text="Exit" />
 
         <Button
             android:id="@+id/btnClearInput"
@@ -52,7 +52,7 @@
         android:id="@+id/viewScroll"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" >
+        android:layout_weight="0.72" >
 
         <TextView
             android:id="@+id/txtReceive"
@@ -64,6 +64,21 @@
             android:hint="Message shows up here ..."
             android:scrollbars="vertical" />
     </ScrollView>
+
+    <EditText
+        android:id="@+id/valueRead"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10" >
+
+        <requestFocus />
+    </EditText>
+
+    <TextView
+        android:id="@+id/satuan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView" />
 
     <EditText
         android:id="@+id/editSend"
@@ -83,7 +98,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:padding="5dp"
-            android:text="Clear" />
+            android:text="Set" />
 
         <Button
             android:id="@+id/btnSend"
@@ -91,7 +106,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:padding="5dp"
-            android:text="Send" />
+            android:text="Manual" />
     </LinearLayout>
 
 </LinearLayout> <!-- </RelativeLayout> -->
