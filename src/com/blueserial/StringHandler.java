@@ -21,7 +21,7 @@ public class StringHandler {
 	public String Handle(String input){
 		String[] lines=input.split("\r\n");
 		int g=0;
-		if(!this.mHandlers.containsKey(String.valueOf(lines[g]))){
+		if(!this.mHandlers.containsKey(String.valueOf(lines[g].charAt(0)))){
 			g++;
 		}
 		String i = new String(lines[g].substring(0, 1));
@@ -31,7 +31,7 @@ public class StringHandler {
 	public String getSatuan(String input){
 		String[] lines=input.split("\r\n");
 		int g=0;
-		if(!this.mHandlers.containsKey(String.valueOf(lines[g]))){
+		if(!this.mHandlers.containsKey(String.valueOf(lines[g].charAt(0)))){
 			g++;
 		}
 		String i = new String(lines[g].substring(0, 1));

@@ -178,6 +178,8 @@ public class MainActivity extends Activity {
 									String h=strInput;
 									mTxtReceive.append(strInput+"\n");
 									//String[] read=strInput.split(" ");
+									//mValueRead.setText(strInput);
+									//mSatuan.setText(strHandler.getSatuan(strInput));
 									
 									mValueRead.setText(strHandler.Handle(strInput));
 									mSatuan.setText(strHandler.getSatuan(strInput));

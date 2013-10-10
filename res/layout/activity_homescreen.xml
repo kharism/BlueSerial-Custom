@@ -43,7 +43,7 @@
             android:layout_gravity="bottom"
             android:layout_weight="1"
             android:enabled="false"
-            android:text="Connect" />
+            android:text="Connect All" />
 
     </LinearLayout>
 
