@@ -1,0 +1,7 @@
+untuk saat ini sensor akan push ke device
+format data:
+timbangan : S ?      ????? g
+tinggi badan : T     ?????? cm
+caliper : L      ????? mm
+
+jika pull maka device akan mengirim hasil bacaan ketika menerima string "GET"
