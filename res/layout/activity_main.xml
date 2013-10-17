@@ -64,10 +64,14 @@
             android:hint="Message shows up here ..."
             android:scrollbars="vertical" />
     </ScrollView>
-
+	<LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        >
     <EditText
         android:id="@+id/valueRead"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight=".5"
         android:layout_height="wrap_content"
         android:ems="10" >
 
@@ -76,10 +80,11 @@
 
     <TextView
         android:id="@+id/satuan"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+        android:layout_weight=".5"
         android:layout_height="wrap_content"
         android:text="TextView" />
-
+	</LinearLayout>
     <EditText
         android:id="@+id/editSend"
         android:layout_width="fill_parent"

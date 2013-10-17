@@ -6,6 +6,7 @@
 
 package com.blueserial;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -13,11 +14,15 @@ import java.util.UUID;
 
 import com.blueserial.R;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
@@ -46,6 +51,34 @@ public class Homescreen extends Activity {
 	private ListView mLstDevices;
 
 	private BluetoothAdapter mBTAdapter;
+
+    private ArrayAdapter<String> mPairedDevicesArrayAdapter;
+    private ArrayAdapter<String> mNewDevicesArrayAdapter;
+
+	private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            // When discovery finds a device
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                // Get the BluetoothDevice object from the Intent
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                // If it's already paired, skip it, because it's been listed already
+                if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
+                    mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                }
+            // When discovery is finished, change the Activity title
+            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                setProgressBarIndeterminateVisibility(false);
+                setTitle("Search Device");
+                if (mNewDevicesArrayAdapter.getCount() == 0) {
+                    String noDevices = "No devices found";
+                    mNewDevicesArrayAdapter.add(noDevices);
+                }
+            }
+        }
+    };
 
 	private static final int BT_ENABLE_REQUEST = 10; // This is the code we use for BT Enable
 	private static final int SETTINGS = 20;
@@ -94,10 +127,15 @@ public class Homescreen extends Activity {
 		} else {
 			initList(new ArrayList<BluetoothDevice>());
 		}
-		
+		IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        this.registerReceiver(mReceiver, filter);
+
+        // Register for broadcasts when discovery has finished
+        filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        this.registerReceiver(mReceiver, filter);
 
 		mBtnSearch.setOnClickListener(new OnClickListener() {
-
+			List<BluetoothDevice> listDevices;
 			@Override
 			public void onClick(View arg0) {
 				mBTAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -108,6 +146,11 @@ public class Homescreen extends Activity {
 					Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 					startActivityForResult(enableBT, BT_ENABLE_REQUEST);
 				} else {
+					//listDevices = new ArrayList<BluetoothDevice>();
+					/*for (BluetoothDevice device : pairedDevices) {
+						listDevices.add(device);
+					}*/
+			        
 					new SearchDevices().execute();
 				}
 			}
@@ -230,16 +273,45 @@ public class Homescreen extends Activity {
 	 *
 	 */
 	private class SearchDevices extends AsyncTask<Void, Void, List<BluetoothDevice>> {
-
+		List<BluetoothDevice> listDevices;
+		@SuppressLint("NewApi")
 		@Override
 		protected List<BluetoothDevice> doInBackground(Void... params) {
 			Set<BluetoothDevice> pairedDevices = mBTAdapter.getBondedDevices();
-			List<BluetoothDevice> listDevices = new ArrayList<BluetoothDevice>();
+			listDevices = new ArrayList<BluetoothDevice>();
 			for (BluetoothDevice device : pairedDevices) {
-				listDevices.add(device);
+				BluetoothSocket mBTSocket;
+				try {
+					mBTSocket = device.createInsecureRfcommSocketToServiceRecord(mDeviceUUID);
+					BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
+					mBTSocket.connect();
+					listDevices.add(device);
+					mBTSocket.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					//msg(device.getName()+" tidak bisa dihubungkan");
+					//e.printStackTrace();
+					continue;
+				}
+				
 			}
+			/*mBTAdapter.startDiscovery();
+			BroadcastReceiver mReceiver = new BroadcastReceiver() {
+				public void onReceive(Context context, Intent intent) {
+				    String action = intent.getAction();
+				    if (BluetoothDevice.ACTION_FOUND.equals(action)) 
+				    {
+				        // Get the BluetoothDevice object from the Intent
+				        BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+				        // Add the name and address to an array adapter to show in a ListView
+				        //mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+				        listDevices.add(device);
+				    }
+				  }
+			};
+			IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND); 
+			registerReceiver(mReceiver, filter);*/
 			return listDevices;
-
 		}
 
 		@Override
