@@ -49,7 +49,7 @@ public class Homescreen extends Activity {
 	private Button mBtnSearch;
 	private Button mBtnConnect;
 	private ListView mLstDevices;
-
+	private TextView heading;
 	private BluetoothAdapter mBTAdapter;
 
     private ArrayAdapter<String> mPairedDevicesArrayAdapter;
@@ -104,7 +104,7 @@ public class Homescreen extends Activity {
 
 		mBtnSearch = (Button) findViewById(R.id.btnSearch);
 		mBtnConnect = (Button) findViewById(R.id.btnConnect);
-
+		heading = (TextView) findViewById(R.id.txtListHeading);
 		mLstDevices = (ListView) findViewById(R.id.lstDevices);
 		/*
 		 *Check if there is a savedInstanceState. If yes, that means the onCreate was probably triggered by a configuration change
@@ -139,7 +139,8 @@ public class Homescreen extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				mBTAdapter = BluetoothAdapter.getDefaultAdapter();
-
+				heading.setText("Searching");
+				mBtnSearch.setEnabled(false);
 				if (mBTAdapter == null) {
 					Toast.makeText(getApplicationContext(), "Bluetooth not found", Toast.LENGTH_SHORT).show();
 				} else if (!mBTAdapter.isEnabled()) {
@@ -317,6 +318,8 @@ public class Homescreen extends Activity {
 		@Override
 		protected void onPostExecute(List<BluetoothDevice> listDevices) {
 			super.onPostExecute(listDevices);
+			heading.setText("Finished");
+			mBtnSearch.setEnabled(true);
 			if (listDevices.size() > 0) {
 				MyAdapter adapter = (MyAdapter) mLstDevices.getAdapter();
 				adapter.replaceItems(listDevices);
