@@ -5,16 +5,17 @@ Blue Serial is an Android app which is compatible and tested on Android versions
 
 It is fairly straightforward and allows for 2 way communication.
 
+This project is customized BlueSerial with some parser so you can add another parser for you project.
+
 Getting Started
 ===============
 
-The entire project has been developed in Eclipse Juno (4.2). First, you need to clone the project using:
+clone the project with 
 
 git clone https://github.com/plastygrove/BlueSerial.git
 
 Then import the project into Eclipse using File->New->Project...->Android->Android Project from Existing Code and follow the instructions
 
-Contact
-=======
 
-If you have any questions, feel free to reach out to me at plasty.grove@g****.com
+the original blue-serial project is created by plastyGroove
+I just add abstract parser
