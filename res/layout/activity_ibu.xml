@@ -105,16 +105,18 @@
 		    android:id="@+id/textLila"
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-		    android:layout_weight="0.7"
+		    android:layout_weight="0.56"
 		    android:text="Lila" />
+
     	<EditText
-        	android:id="@+id/editTextLila"
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-        	android:layout_weight="0.3"
-        	android:enabled="false"
-        	android:inputType="none"
-        	android:ems="10" >
+    	    android:id="@+id/editTextLila"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:layout_weight="1.11"
+    	    android:ems="10"
+    	    android:enabled="false"
+    	    android:inputType="none" >
+
             <requestFocus />
     	</EditText>
 
@@ -122,7 +124,6 @@
     	    android:id="@+id/buttonManualLila"
     	    android:layout_width="wrap_content"
     	    android:layout_height="wrap_content"
-    	    android:layout_weight="0.7"
     	    android:text="Manual" />
 
     </LinearLayout>    
@@ -135,16 +136,18 @@
 		    android:id="@+id/textHb"
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-		    android:layout_weight="0.7"
+		    android:layout_weight="0.59"
 		    android:text="Hb" />
+
     	<EditText
-        	android:id="@+id/editHb"
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-        	android:layout_weight="0.3"
-        	android:enabled="false"
-        	android:inputType="none"
-        	android:ems="10" >
+    	    android:id="@+id/editHb"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:layout_weight="1.21"
+    	    android:ems="10"
+    	    android:enabled="false"
+    	    android:inputType="none" >
+
             <requestFocus />
     	</EditText>
 
@@ -152,13 +155,12 @@
     	    android:id="@+id/buttonManualHb"
     	    android:layout_width="wrap_content"
     	    android:layout_height="wrap_content"
-    	    android:layout_weight="0.7"
     	    android:text="Manual" />
 
     </LinearLayout>
 
     <Button
-        android:id="@+id/buttonIbu"
+        android:id="@+id/buttonIbuSet"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Set" />

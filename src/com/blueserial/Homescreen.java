@@ -7,6 +7,8 @@
 package com.blueserial;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -51,7 +53,8 @@ public class Homescreen extends Activity {
 	private ListView mLstDevices;
 	private TextView heading;
 	private BluetoothAdapter mBTAdapter;
-
+	private Button mButtonIbu;
+	private Button mButtonAnak;
     private ArrayAdapter<String> mPairedDevicesArrayAdapter;
     private ArrayAdapter<String> mNewDevicesArrayAdapter;
 
@@ -93,7 +96,8 @@ public class Homescreen extends Activity {
 	private static final String DEVICE_LIST_SELECTED = "com.blueserial.devicelistselected";
 	public static final String BUFFER_SIZE = "com.blueserial.buffersize";
 	private static final String TAG = "BlueTest5-Homescreen";
-
+	public static final String DEVICES_LISTS = "com.blueserial.devices";
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -104,6 +108,8 @@ public class Homescreen extends Activity {
 
 		mBtnSearch = (Button) findViewById(R.id.btnSearch);
 		mBtnConnect = (Button) findViewById(R.id.btnConnect);
+		mButtonAnak = (Button) findViewById(R.id.buttonAnak);
+		mButtonIbu = (Button) findViewById(R.id.buttonIbu);
 		heading = (TextView) findViewById(R.id.txtListHeading);
 		mLstDevices = (ListView) findViewById(R.id.lstDevices);
 		/*
@@ -156,7 +162,30 @@ public class Homescreen extends Activity {
 				}
 			}
 		});
-
+		mButtonAnak.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				List<BluetoothDevice> devices = ((MyAdapter) (mLstDevices.getAdapter())).getEntireList();
+				
+			}
+		});
+		mButtonIbu.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if(mLstDevices!=null){
+				ArrayList<BluetoothDevice> devices = (ArrayList<BluetoothDevice>) ((MyAdapter) (mLstDevices.getAdapter())).getEntireList();
+				Intent intent = new Intent(getApplicationContext(), IbuActivity.class);
+				intent.putExtra(DEVICES_LISTS, devices);
+				intent.putExtra(DEVICE_UUID, mDeviceUUID.toString());
+				intent.putExtra(BUFFER_SIZE, mBufferSize);
+				startActivity(intent);
+				}
+			}
+		});
 		mBtnConnect.setOnClickListener(new OnClickListener() {
 			/**
 			 * connect to all paired devices
@@ -166,7 +195,7 @@ public class Homescreen extends Activity {
 				List<BluetoothDevice> devices = ((MyAdapter) (mLstDevices.getAdapter())).getEntireList();
 				for(int i=0;i<devices.size();i++){
 					BluetoothDevice device = devices.get(i);
-					//msg(device.getAddress());
+					msg(device.getName());
 					Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 					intent.putExtra(DEVICE_EXTRA, device);
 					intent.putExtra(DEVICE_UUID, mDeviceUUID.toString());
@@ -283,7 +312,9 @@ public class Homescreen extends Activity {
 			for (BluetoothDevice device : pairedDevices) {
 				BluetoothSocket mBTSocket;
 				try {
-					mBTSocket = device.createInsecureRfcommSocketToServiceRecord(mDeviceUUID);
+					Method m = device.getClass().getMethod("createRfcommSocket", new Class[] {int.class});
+					
+					mBTSocket = (BluetoothSocket) m.invoke(device, 1);
 					BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
 					mBTSocket.connect();
 					listDevices.add(device);
@@ -291,8 +322,20 @@ public class Homescreen extends Activity {
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					//msg(device.getName()+" tidak bisa dihubungkan");
-					//e.printStackTrace();
+					e.printStackTrace();
 					continue;
+				} catch (NoSuchMethodException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 				
 			}

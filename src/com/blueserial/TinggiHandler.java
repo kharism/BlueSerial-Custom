@@ -9,19 +9,26 @@ public class TinggiHandler extends AbstractHandler {
 	 */
 	public String Handle(String a) {
 		// TODO Auto-generated method stub
-		String[] p = a.split(" ");
+		try{String[] p = a.split(" ");
 		nilai = p[3];
 		Satuan = p[4];
-		return nilai;
+		return nilai;}
+		catch(Exception ex){
+			return "";
+		}
 	}
 
 	@Override
 	public String getSatuan(String a) {
 		// TODO Auto-generated method stub
+		try{
 		String[] p = a.split(" ");
 		nilai = p[3];
 		Satuan = p[4];
-		return Satuan;
+		return Satuan;}
+		catch(Exception ex){
+			return "cm";
+		}
 	}
 
 }

@@ -33,6 +33,7 @@ public class IbuActivity extends Activity {
 	private Button buttonManualBerat;
 	private Button buttonManualTinggi;
 	private Button buttonManualLila;
+	private Button buttonIbuSet;
 	private EditText editHb;
 	private EditText editTextLila;
 	private EditText editTextTinggi;
@@ -55,6 +56,7 @@ public class IbuActivity extends Activity {
 		buttonManualBerat = (Button) findViewById(R.id.buttonManualBerat);
 		buttonManualTinggi = (Button) findViewById(R.id.buttonManualTinggi);
 		buttonManualLila = (Button) findViewById(R.id.buttonManualLila);
+		buttonIbuSet = (Button) findViewById(R.id.buttonIbuSet);
 		editHb = (EditText) findViewById(R.id.editHb);
 		editTextLila = (EditText) findViewById(R.id.editTextLila);
 		editTextTinggi = (EditText) findViewById(R.id.editTextTinggi);
@@ -95,6 +97,17 @@ public class IbuActivity extends Activity {
 				// TODO Auto-generated method stub
 				editTextLila.setInputType(InputType.TYPE_CLASS_TEXT);
 				editTextLila.setEnabled(true);
+			}
+		});
+		buttonIbuSet.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				for(int i=readThreads.size()-1;i>=0;i--){
+					ReadInput u = (ReadInput)readThreads.get(i);
+					u.stop();
+					readThreads.remove(u);
+				}
 			}
 		});
 		for(int i=0;i<devices.size();i++){
@@ -273,12 +286,12 @@ public class IbuActivity extends Activity {
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			for(int i=0;i<readThreads.size();i++){
+			for(int i=readThreads.size();i>=0;i--){
 				ReadInput r = (ReadInput) readThreads.get(i);
 				r.stop();
 				while (r.isRunning())
 					;
-				readThreads.remove(i);
+				readThreads.remove(r);
 			}
 
 			return null;

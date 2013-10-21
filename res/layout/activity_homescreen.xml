@@ -45,6 +45,25 @@
             android:enabled="false"
             android:text="Connect All" />
 
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+            <Button
+            android:id="@+id/buttonIbu"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:text="Form Ibu"/>
+        <Button
+            android:id="@+id/buttonAnak"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:text="Form Anak"/>    
     </LinearLayout>
 
 </LinearLayout>

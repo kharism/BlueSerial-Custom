@@ -17,5 +17,6 @@
     <string name="pref_update_setting">Update Settings</string>
     <string name="pref_text_buffer_title">Input Buffer Size (In Chars)</string>
     <string name="pref_text_buffer_summary">Change the receive text buffer size</string>
+    <string name="title_activity_ibu">Kontrol Ibu</string>
 
 </resources>

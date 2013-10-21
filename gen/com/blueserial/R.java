@@ -30,34 +30,56 @@ public final class R {
         public static final int logo=0x7f020002;
     }
     public static final class id {
-        public static final int action_settings=0x7f0a0010;
-        public static final int btnClear=0x7f0a000d;
-        public static final int btnClearInput=0x7f0a0005;
+        public static final int action_settings=0x7f0a0023;
+        public static final int btnClear=0x7f0a0020;
+        public static final int btnClearInput=0x7f0a0018;
         public static final int btnConnect=0x7f0a0003;
-        public static final int btnDisconnect=0x7f0a0004;
+        public static final int btnDisconnect=0x7f0a0017;
         public static final int btnSearch=0x7f0a0002;
-        public static final int btnSend=0x7f0a000e;
-        public static final int chkReceiveText=0x7f0a0007;
-        public static final int chkScroll=0x7f0a0006;
-        public static final int editSend=0x7f0a000c;
-        public static final int lstContent=0x7f0a000f;
+        public static final int btnSend=0x7f0a0021;
+        public static final int buttonAnak=0x7f0a0005;
+        public static final int buttonBack=0x7f0a0007;
+        public static final int buttonIbu=0x7f0a0004;
+        public static final int buttonIbuSet=0x7f0a0016;
+        public static final int buttonManualBerat=0x7f0a000c;
+        public static final int buttonManualHb=0x7f0a0015;
+        public static final int buttonManualLila=0x7f0a0012;
+        public static final int buttonManualTinggi=0x7f0a000f;
+        public static final int buttonMenu=0x7f0a0008;
+        public static final int buttonSimpan=0x7f0a0009;
+        public static final int chkReceiveText=0x7f0a001a;
+        public static final int chkScroll=0x7f0a0019;
+        public static final int editHb=0x7f0a0014;
+        public static final int editSend=0x7f0a001f;
+        public static final int editTextBerat=0x7f0a000b;
+        public static final int editTextLila=0x7f0a0011;
+        public static final int editTextTinggi=0x7f0a000e;
+        public static final int lstContent=0x7f0a0022;
         public static final int lstDevices=0x7f0a0001;
-        public static final int satuan=0x7f0a000b;
+        public static final int satuan=0x7f0a001e;
+        public static final int textBerat=0x7f0a000a;
+        public static final int textHb=0x7f0a0013;
+        public static final int textLila=0x7f0a0010;
+        public static final int textTinggi=0x7f0a000d;
+        public static final int textView2=0x7f0a0006;
         public static final int txtListHeading=0x7f0a0000;
-        public static final int txtReceive=0x7f0a0009;
-        public static final int valueRead=0x7f0a000a;
-        public static final int viewScroll=0x7f0a0008;
+        public static final int txtReceive=0x7f0a001c;
+        public static final int valueRead=0x7f0a001d;
+        public static final int viewScroll=0x7f0a001b;
     }
     public static final class layout {
         public static final int activity_helpscreen=0x7f030000;
         public static final int activity_homescreen=0x7f030001;
-        public static final int activity_main=0x7f030002;
-        public static final int list_item=0x7f030003;
+        public static final int activity_ibu=0x7f030002;
+        public static final int activity_main=0x7f030003;
+        public static final int ibu=0x7f030004;
+        public static final int list_item=0x7f030005;
     }
     public static final class menu {
         public static final int helpscreen=0x7f090000;
         public static final int homescreen=0x7f090001;
-        public static final int main=0x7f090002;
+        public static final int ibu=0x7f090002;
+        public static final int main=0x7f090003;
     }
     public static final class string {
         public static final int action_settings=0x7f070001;
@@ -75,6 +97,7 @@ public final class R {
         public static final int pref_uuid_title=0x7f07000a;
         public static final int pref_uuid_update=0x7f07000c;
         public static final int title_activity_helpscreen=0x7f070002;
+        public static final int title_activity_ibu=0x7f070010;
         public static final int title_activity_main=0x7f070005;
     }
     public static final class style {
