@@ -1,0 +1,238 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
+    tools:context=".ActivityAnak" >
+
+
+    <RelativeLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal" >
+	    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nama Ibu" />
+
+    <Button
+        android:id="@+id/buttonBack"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:text="Back" />
+    <Button
+        android:id="@+id/buttonMenu"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/buttonBack"
+        android:text="Menu" />
+    <Button
+        android:id="@+id/buttonSimpan"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/buttonMenu"
+        android:text="Simpan" />
+    </RelativeLayout>
+    
+
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal" >
+
+		<TextView
+		    android:id="@+id/textBerat"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="0.23"
+		    android:text="Berat Badan" />
+    	<EditText
+        	android:id="@+id/editTextBerat"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:layout_weight="0.7"
+        	android:enabled="false"
+        	android:inputType="none"
+        	android:ems="10" >
+            <requestFocus />
+    	</EditText>
+
+    	<Button
+    	    android:id="@+id/buttonManualBerat"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:text="Manual" />
+
+    </LinearLayout>
+	<LinearLayout
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal" >
+
+		<TextView
+		    android:id="@+id/textTinggi"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="0.23"
+		    android:text="Tinggi Badan" />
+    	<EditText
+        	android:id="@+id/editTextTinggi"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:layout_weight="0.7"
+        	android:enabled="false"
+        	android:inputType="none"
+        	android:ems="10" >
+            <requestFocus />
+    	</EditText>
+
+    	<Button
+    	    android:id="@+id/buttonManualTinggi"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:text="Manual" />
+
+    </LinearLayout>	
+    <LinearLayout
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal" >
+
+		<TextView
+		    android:id="@+id/textLila"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="0.56"
+		    android:text="Lila" />
+
+    	<EditText
+    	    android:id="@+id/editTextLila"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:layout_weight="1.11"
+    	    android:ems="10"
+    	    android:enabled="false"
+    	    android:inputType="none" >
+
+            <requestFocus />
+    	</EditText>
+
+    	<Button
+    	    android:id="@+id/buttonManualLila"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:text="Manual" />
+
+    </LinearLayout>    
+    <LinearLayout
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal" >
+
+		<TextView
+		    android:id="@+id/textLika"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="0.56"
+		    android:text="Lika" />
+
+    	<EditText
+    	    android:id="@+id/editTextLika"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:layout_weight="1.11"
+    	    android:ems="10"
+    	    android:enabled="false"
+    	    android:inputType="none" >
+
+            <requestFocus />
+    	</EditText>
+
+    	<Button
+    	    android:id="@+id/buttonManualLika"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:text="Manual" />
+
+    </LinearLayout>
+    <LinearLayout
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal" >
+
+		<TextView
+		    android:id="@+id/textTricep"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="0.56"
+		    android:text="Tricep" />
+
+    	<EditText
+    	    android:id="@+id/editTextTricep"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:layout_weight="1.11"
+    	    android:ems="10"
+    	    android:enabled="false"
+    	    android:inputType="none" >
+
+            <requestFocus />
+    	</EditText>
+
+    	<Button 
+    	    android:id="@+id/buttonManualTricep"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:text="Manual" />
+
+    </LinearLayout>
+    <LinearLayout
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal" >
+
+		<TextView
+		    android:id="@+id/textSubskapular"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="0.56"
+		    android:text="Subskapular" />
+
+    	<EditText
+    	    android:id="@+id/editTextSubskapular"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:layout_weight="1.11"
+    	    android:ems="10"
+    	    android:enabled="false"
+    	    android:inputType="none" >
+
+            <requestFocus />
+    	</EditText>
+
+    	<Button
+    	    android:id="@+id/buttonManualSubskapular"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:text="Manual" />
+
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/buttonAnakSet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set" />
+     
+    
+</LinearLayout>
