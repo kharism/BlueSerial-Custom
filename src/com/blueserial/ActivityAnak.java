@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 
 
+
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
@@ -152,6 +153,16 @@ public class ActivityAnak extends Activity {
 		getMenuInflater().inflate(R.menu.anak, menu);
 		return true;
 	}
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		for(int i=readThreads.size()-1;i>=0;i--){
+			ReadInput u = (ReadInput)readThreads.get(i);
+			u.stop();
+			readThreads.remove(u);
+		}
+		super.onBackPressed();
+	}
 	private class ConnectBT extends AsyncTask<Void, Void, Void> {
 		private boolean mConnectSuccessful = true;
 		BluetoothSocket mBTSocket;
@@ -234,6 +245,7 @@ public class ActivityAnak extends Activity {
 			maps.put("T", editTextTinggi);
 			maps.put("S", editTextBerat);
 			maps.put("LE", editTextTricep);
+			maps.put("BB", editTextBerat);
 			t = new Thread(this, "Input Thread");
 			t.start();
 		}
@@ -278,7 +290,9 @@ public class ActivityAnak extends Activity {
 							@Override
 							public void run() {
 								// TODO Auto-generated method stub
-								curr.setText(sh.Handle(strInput));
+								String j = sh.Handle(strInput);
+								if(!j.isEmpty())
+								curr.setText(j);
 							}
 						});}
 						catch(Exception ex){

@@ -42,6 +42,10 @@
             android:name="com.blueserial.IbuActivity"
             android:label="@string/title_activity_ibu" >
         </activity>
+        <activity
+            android:name="com.blueserial.ActivityAnak"
+            android:label="@string/title_activity_anak" >
+        </activity>
     </application>
 
 </manifest>

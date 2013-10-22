@@ -12,6 +12,7 @@ public class StringHandler {
 		mHandlers.put("T", new TinggiHandler());
 		mHandlers.put("S", new BeratHandler());
 		mHandlers.put("LE", new CaliperHandler());
+		mHandlers.put("BB",new BBeratHandler());
 	}
 	private boolean isNumeric(String j){
 		try{
@@ -29,7 +30,9 @@ public class StringHandler {
 		}
 		String i = new String(lines[g].split(" ")[0]);
 		AbstractHandler l = (AbstractHandler)mHandlers.get(i);
-		return l.Handle(lines[g]);
+		String h = "";
+		h=l.Handle(lines[g]);
+		return h;
 	}
 	public String getSatuan(String input){
 		String[] lines=input.split("\r\n");

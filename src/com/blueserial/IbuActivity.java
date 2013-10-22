@@ -44,6 +44,17 @@ public class IbuActivity extends Activity {
 	private ArrayList<BluetoothDevice> devices;
 	private boolean exitOnDisconect = true;
 	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		for(int i=readThreads.size()-1;i>=0;i--){
+			ReadInput u = (ReadInput)readThreads.get(i);
+			u.stop();
+			readThreads.remove(u);
+		}
+		super.onBackPressed();
+	}
+	
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_ibu);
@@ -112,6 +123,7 @@ public class IbuActivity extends Activity {
 		});
 		for(int i=0;i<devices.size();i++){
 			new ConnectBT(devices.get(i)).execute();
+		
 			
 		}
 	}
@@ -138,7 +150,7 @@ public class IbuActivity extends Activity {
 		protected void onPreExecute() {
 			//progressDialog = ProgressDialog.show(IbuActivity.this, "Hold on", "Connecting");// http://stackoverflow.com/a/11130220/1287554
 		}
-
+		
 		@Override
 		protected Void doInBackground(Void... devices) {
 
@@ -204,7 +216,7 @@ public class IbuActivity extends Activity {
 			maps = new HashMap<String, EditText>();
 			maps.put("T", editTextTinggi);
 			maps.put("S", editTextBerat);
-			maps.put("LE", editHb);
+			maps.put("BB", editTextBerat);
 			t = new Thread(this, "Input Thread");
 			t.start();
 		}
@@ -247,7 +259,9 @@ public class IbuActivity extends Activity {
 							@Override
 							public void run() {
 								// TODO Auto-generated method stub
-								curr.setText(sh.Handle(strInput));
+								String j = sh.Handle(strInput);
+								if(!j.isEmpty())
+								curr.setText(j);
 							}
 						});}
 						catch(Exception ex){

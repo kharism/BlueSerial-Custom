@@ -167,8 +167,14 @@ public class Homescreen extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				List<BluetoothDevice> devices = ((MyAdapter) (mLstDevices.getAdapter())).getEntireList();
-				
+				if(mLstDevices!=null){
+					ArrayList<BluetoothDevice> devices = (ArrayList<BluetoothDevice>) ((MyAdapter) (mLstDevices.getAdapter())).getEntireList();
+					Intent intent = new Intent(getApplicationContext(), ActivityAnak.class);
+					intent.putExtra(DEVICES_LISTS, devices);
+					intent.putExtra(DEVICE_UUID, mDeviceUUID.toString());
+					intent.putExtra(BUFFER_SIZE, mBufferSize);
+					startActivity(intent);
+					}
 			}
 		});
 		mButtonIbu.setOnClickListener(new OnClickListener() {
