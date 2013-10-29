@@ -59,6 +59,8 @@ public class IbuActivity extends Activity {
 		super.onBackPressed();
 	}
 	
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

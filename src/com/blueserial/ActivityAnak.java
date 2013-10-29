@@ -28,6 +28,7 @@ import android.content.Intent;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -157,6 +158,19 @@ public class ActivityAnak extends Activity {
 			new ConnectBT(devices.get(i)).execute();
 			
 		}
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		switch(item.getItemId()){
+		case R.id.action_settings:
+			Toast.makeText(this, "kkk", Toast.LENGTH_LONG).show();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+		
 	}
 
 	@Override

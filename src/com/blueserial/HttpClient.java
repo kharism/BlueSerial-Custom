@@ -9,9 +9,12 @@ import java.util.zip.GZIPInputStream;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
@@ -52,10 +55,7 @@ public class HttpClient {
 				// convert content stream to a String
 				String resultString= convertStreamToString(instream);
 				instream.close();
-				resultString = resultString.substring(1,resultString.length()-1); // remove wrapping "[" and "]"
-				if(resultString.charAt(0)!='{'){
-					resultString = "{"+resultString;
-				}
+				
 				// Transform the String into a JSONObject
 				JSONObject jsonObjRecv = new JSONObject(resultString);
 				// Raw DEBUG output of our received JSON object:
@@ -75,7 +75,32 @@ public class HttpClient {
 		return null;
 	}
 
+	public static JSONObject SendHttpGet(String URL){
+		String jsonRaw = getHttp(URL);
+		JSONObject json=null;
+		try {
+			json = new JSONObject(jsonRaw);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return json;
+		
+	}
+	private static String getHttp(String url){
+		String output;
+		try {
+		    DefaultHttpClient httpClient = new DefaultHttpClient();
+		    HttpGet httpGet = new HttpGet(url);
 
+		    HttpResponse httpResponse = httpClient.execute(httpGet);
+		    HttpEntity httpEntity = httpResponse.getEntity();
+		    output = EntityUtils.toString(httpEntity);
+		    return output;
+		}catch(Exception ex){
+			return "";
+		}
+	}
 	private static String convertStreamToString(InputStream is) {
 		/*
 		 * To convert the InputStream to String we use the BufferedReader.readLine()

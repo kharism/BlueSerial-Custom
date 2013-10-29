@@ -133,12 +133,12 @@ public class Homescreen extends Activity {
 		} else {
 			initList(new ArrayList<BluetoothDevice>());
 		}
-		IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        this.registerReceiver(mReceiver, filter);
+		//IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        //this.registerReceiver(mReceiver, filter);
 
         // Register for broadcasts when discovery has finished
-        filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        this.registerReceiver(mReceiver, filter);
+        //filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        //this.registerReceiver(mReceiver, filter);
 
 		mBtnSearch.setOnClickListener(new OnClickListener() {
 			List<BluetoothDevice> listDevices;

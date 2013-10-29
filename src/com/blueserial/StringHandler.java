@@ -30,15 +30,18 @@ public class StringHandler {
 			g++;
 		}
 		String h = "";
-		
-		do{
-		String i = new String(lines[g].split(" ")[0]);
-		AbstractHandler l = (AbstractHandler)mHandlers.get(i);
-		h=l.Handle(lines[g]);
-		g++;
+		try{
+			do{
+				String i = new String(lines[g].split(" ")[0]);
+				AbstractHandler l = (AbstractHandler)mHandlers.get(i);
+				h=l.Handle(lines[g]);
+				g++;
+			}
+			while(h.isEmpty());
+			return h;
+		}catch(Exception ex){
+			return "";
 		}
-		while(h.isEmpty());
-		return h;
 	}
 	public String getSatuan(String input){
 		String[] lines=input.split("\r\n");
