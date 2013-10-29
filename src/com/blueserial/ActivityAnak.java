@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -37,6 +38,8 @@ import android.widget.Toast;
 
 @SuppressLint("ShowToast")
 public class ActivityAnak extends Activity {
+	public final static String BALITA_LIST = "http://gizi.inovasihusada.com/andro/antro/balita/";
+	public final static String LOGIN = "http://gizi.inovasihusada.com/ws/usr/login/";
 	private Button buttonManualBerat;
 	private Button buttonManualTinggi;
 	private Button buttonManualLila;
@@ -58,6 +61,7 @@ public class ActivityAnak extends Activity {
 	private UUID mDeviceUUID;
 	private Handler loginHandler;
 	private Activity activity;
+	private boolean isLogedIn;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -165,7 +169,7 @@ public class ActivityAnak extends Activity {
 		// TODO Auto-generated method stub
 		switch(item.getItemId()){
 		case R.id.action_settings:
-			Toast.makeText(this, "kkk", Toast.LENGTH_LONG).show();
+			new GetBalitaTask().execute();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -359,7 +363,7 @@ public class ActivityAnak extends Activity {
 			login.put("username", "operator");
 			login.put("password", "operator");
 			JSONObject o = new JSONObject(login);
-			rr = HttpClient.SendHttpPost("http://gizi.inovasihusada.com/ws/usr/login", o);
+			rr = (JSONObject)HttpClient.SendHttpPost("http://gizi.inovasihusada.com/ws/usr/login", o);
 			Log.i("JSON", rr.toString());
 			return null;
 		}
@@ -371,6 +375,10 @@ public class ActivityAnak extends Activity {
 				message = ((JSONObject)rr.get("message"));
 				//activity.setTitle(message.getString("pesan"));
 				strMessage = message.getString("pesan");
+				if(message.getString("tipe").equals("success")){
+					isLogedIn = true;
+				}
+				
 				activity.runOnUiThread(new Runnable() {					
 					@Override
 					public void run() {
@@ -384,6 +392,29 @@ public class ActivityAnak extends Activity {
 			
 			super.onPostExecute(result);
 		}
+	}
+	private class GetBalitaTask extends AsyncTask<Void, Void, Void>{
+		JSONArray rr;
+		@Override
+		protected Void doInBackground(Void... arg0) {
+			rr = (JSONArray)HttpClient.SendHttpGet(ActivityAnak.BALITA_LIST);
+			
+			return null;
+		}
+		@Override
+		protected void onPostExecute(Void result) {
+			// TODO Auto-generated method stub
+			activity.runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					Toast.makeText(activity, rr.toString(), Toast.LENGTH_LONG).show();
+				}
+			});
+			super.onPostExecute(result);
+		}
+		
 	}
 	private class DisConnectBT extends AsyncTask<Void, Void, Void> {
 

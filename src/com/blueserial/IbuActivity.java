@@ -48,6 +48,7 @@ public class IbuActivity extends Activity {
 	private List<Runnable> readThreads;
 	private ArrayList<BluetoothDevice> devices;
 	private boolean exitOnDisconect = true;
+	private boolean isLogedIn = false;
 	@Override
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
@@ -311,7 +312,7 @@ public class IbuActivity extends Activity {
 			login.put("username", "operator");
 			login.put("password", "operator");
 			JSONObject o = new JSONObject(login);
-			rr = HttpClient.SendHttpPost("http://gizi.inovasihusada.com/ws/usr/login", o);
+			rr = (JSONObject)HttpClient.SendHttpPost("http://gizi.inovasihusada.com/ws/usr/login", o);
 			Log.i("JSON", rr.toString());
 			return null;
 		}
@@ -323,6 +324,9 @@ public class IbuActivity extends Activity {
 				message = ((JSONObject)rr.get("message"));
 				//activity.setTitle(message.getString("pesan"));
 				strMessage = message.getString("pesan");
+				if(message.getString("tipe").equals("success")){
+					isLogedIn = true;
+				}
 				activity.runOnUiThread(new Runnable() {					
 					@Override
 					public void run() {

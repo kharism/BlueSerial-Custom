@@ -14,15 +14,18 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
+@SuppressLint("NewApi")
 public class HttpClient {
 	private static final String TAG = "HttpClient";
 
-	public static JSONObject SendHttpPost(String URL, JSONObject jsonObjSend) {
+	public static Object SendHttpPost(String URL, JSONObject jsonObjSend) {
 
 		try {
 			DefaultHttpClient httpclient = new DefaultHttpClient();
@@ -55,12 +58,21 @@ public class HttpClient {
 				// convert content stream to a String
 				String resultString= convertStreamToString(instream);
 				instream.close();
-				
-				// Transform the String into a JSONObject
-				JSONObject jsonObjRecv = new JSONObject(resultString);
-				// Raw DEBUG output of our received JSON object:
-				Log.i(TAG,"<JSONObject>\n"+jsonObjRecv.toString()+"\n</JSONObject>");
-				return jsonObjRecv;
+				if(resultString.charAt(0)=='{')
+				{
+					// Transform the String into a JSONObject
+					JSONObject jsonObjRecv = new JSONObject(resultString);
+					// Raw DEBUG output of our received JSON object:
+					Log.i(TAG,"<JSONObject>\n"+jsonObjRecv.toString()+"\n</JSONObject>");
+					return jsonObjRecv;
+				}
+				else if(resultString.charAt(0)=='[')
+				{
+					JSONArray jsonObjRecv = new JSONArray(resultString);
+					// Raw DEBUG output of our received JSON object:
+					Log.i(TAG,"<JSONArray>\n"+jsonObjRecv.toString()+"\n</JSONArray>");
+					return jsonObjRecv;
+				}
 			} 
 
 		}
@@ -75,17 +87,31 @@ public class HttpClient {
 		return null;
 	}
 
-	public static JSONObject SendHttpGet(String URL){
+	public static Object SendHttpGet(String URL){
 		String jsonRaw = getHttp(URL);
-		JSONObject json=null;
-		try {
-			json = new JSONObject(jsonRaw);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return json;
-		
+		if(!jsonRaw.isEmpty()){
+			if(jsonRaw.charAt(0)=='{'){
+				try {
+					JSONObject o = new JSONObject(jsonRaw);
+					return o;
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else if(jsonRaw.charAt(0)=='['){
+				try {
+					JSONArray o = new JSONArray(jsonRaw);
+					return o;
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else return null;
+		}else
+			return null;
+		return null;
 	}
 	private static String getHttp(String url){
 		String output;
@@ -98,6 +124,7 @@ public class HttpClient {
 		    output = EntityUtils.toString(httpEntity);
 		    return output;
 		}catch(Exception ex){
+			ex.printStackTrace();
 			return "";
 		}
 	}
