@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
@@ -20,6 +23,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -40,6 +44,7 @@ public class IbuActivity extends Activity {
 	private EditText editTextBerat;
 	private ProgressDialog progressDialog;
 	private UUID mDeviceUUID;
+	private Activity activity;
 	private List<Runnable> readThreads;
 	private ArrayList<BluetoothDevice> devices;
 	private boolean exitOnDisconect = true;
@@ -61,7 +66,7 @@ public class IbuActivity extends Activity {
 		readThreads = new ArrayList<Runnable>();
 		Intent intent = getIntent();
 		Bundle b = intent.getExtras();
-		
+		activity = this;
 		editHb = (EditText) findViewById(R.id.editHb);
 		mBtnHbManual = (Button) findViewById(R.id.buttonManualHb);
 		buttonManualBerat = (Button) findViewById(R.id.buttonManualBerat);
@@ -121,6 +126,7 @@ public class IbuActivity extends Activity {
 				}
 			}
 		});
+		new loginTask().execute();
 		for(int i=0;i<devices.size();i++){
 			new ConnectBT(devices.get(i)).execute();
 		
@@ -217,6 +223,7 @@ public class IbuActivity extends Activity {
 			maps.put("T", editTextTinggi);
 			maps.put("S", editTextBerat);
 			maps.put("BB", editTextBerat);
+			maps.put("BI", editTextBerat);
 			t = new Thread(this, "Input Thread");
 			t.start();
 		}
@@ -249,7 +256,7 @@ public class IbuActivity extends Activity {
 						//TODO:Olah bacaan
 						String[] lines=strInput.split("\r\n");
 						int g=0;
-						try{if(lines[g].isEmpty()|| !maps.containsKey(String.valueOf(lines[g].charAt(0)))){
+						try{if(lines[g].isEmpty()|| !maps.containsKey(lines[g].split(" ")[0])){
 							g++;
 						}
 						String pp = new String(lines[g].split(" ")[0]);
@@ -291,6 +298,42 @@ public class IbuActivity extends Activity {
 			}
 		}
 
+	}
+	private class loginTask extends AsyncTask<Void, Void, Void>{
+		JSONObject rr;
+		String strMessage;
+		@Override
+		protected Void doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+			Map<String,String> login = new HashMap<String, String>();
+			login.put("username", "operator");
+			login.put("password", "operator");
+			JSONObject o = new JSONObject(login);
+			rr = HttpClient.SendHttpPost("http://gizi.inovasihusada.com/ws/usr/login", o);
+			Log.i("JSON", rr.toString());
+			return null;
+		}
+		@Override
+		protected void onPostExecute(Void result) {
+			// TODO Auto-generated method stub
+			JSONObject message;
+			try {
+				message = ((JSONObject)rr.get("message"));
+				//activity.setTitle(message.getString("pesan"));
+				strMessage = message.getString("pesan");
+				activity.runOnUiThread(new Runnable() {					
+					@Override
+					public void run() {
+						Toast.makeText(activity, strMessage, Toast.LENGTH_LONG).show();					
+					}
+				});
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			super.onPostExecute(result);
+		}
 	}
 	private class DisConnectBT extends AsyncTask<Void, Void, Void> {
 

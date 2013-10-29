@@ -10,10 +10,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -21,6 +26,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,6 +34,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+@SuppressLint("ShowToast")
 public class ActivityAnak extends Activity {
 	private Button buttonManualBerat;
 	private Button buttonManualTinggi;
@@ -48,12 +55,16 @@ public class ActivityAnak extends Activity {
 	private ArrayList<BluetoothDevice> devices;
 	private boolean exitOnDisconect = true;
 	private UUID mDeviceUUID;
+	private Handler loginHandler;
+	private Activity activity;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_anak);
 		readThreads = new ArrayList<Runnable>();
 		Intent intent = getIntent();
+		loginHandler = new Handler();
+		activity = this;
 		Bundle b = intent.getExtras();
 		buttonManualBerat = (Button) findViewById(R.id.buttonManualBerat);
 		buttonManualTinggi = (Button) findViewById(R.id.buttonManualTinggi);
@@ -141,6 +152,7 @@ public class ActivityAnak extends Activity {
 				}
 			}
 		});
+		new loginTask().execute();
 		for(int i=0;i<devices.size();i++){
 			new ConnectBT(devices.get(i)).execute();
 			
@@ -322,6 +334,42 @@ public class ActivityAnak extends Activity {
 			}
 		}
 
+	}
+	private class loginTask extends AsyncTask<Void, Void, Void>{
+		JSONObject rr;
+		String strMessage;
+		@Override
+		protected Void doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+			Map<String,String> login = new HashMap<String, String>();
+			login.put("username", "operator");
+			login.put("password", "operator");
+			JSONObject o = new JSONObject(login);
+			rr = HttpClient.SendHttpPost("http://gizi.inovasihusada.com/ws/usr/login", o);
+			Log.i("JSON", rr.toString());
+			return null;
+		}
+		@Override
+		protected void onPostExecute(Void result) {
+			// TODO Auto-generated method stub
+			JSONObject message;
+			try {
+				message = ((JSONObject)rr.get("message"));
+				//activity.setTitle(message.getString("pesan"));
+				strMessage = message.getString("pesan");
+				activity.runOnUiThread(new Runnable() {					
+					@Override
+					public void run() {
+						Toast.makeText(activity, strMessage, Toast.LENGTH_LONG).show();					
+					}
+				});
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			super.onPostExecute(result);
+		}
 	}
 	private class DisConnectBT extends AsyncTask<Void, Void, Void> {
 

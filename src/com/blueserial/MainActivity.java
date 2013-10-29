@@ -8,6 +8,8 @@ package com.blueserial;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import com.blueserial.R;
@@ -132,7 +134,14 @@ public class MainActivity extends Activity {
 				mTxtReceive.setText("");
 			}
 		});
-
+		Map<String,String> login = new HashMap<String, String>();
+		try {
+			JSONRequest.makeRequest("gizi.inovasihusada.com/ws/usr/login", login);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			msg(e.getMessage());
+		}
 	}
 
 	private class ReadInput implements Runnable {

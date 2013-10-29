@@ -63,7 +63,7 @@
         	android:enabled="false"
         	android:inputType="none"
         	android:ems="10" >
-            <requestFocus />
+            
     	</EditText>
 
     	<Button
@@ -92,7 +92,7 @@
         	android:enabled="false"
         	android:inputType="none"
         	android:ems="10" >
-            <requestFocus />
+            
     	</EditText>
 
     	<Button
@@ -123,7 +123,7 @@
     	    android:enabled="false"
     	    android:inputType="none" >
 
-            <requestFocus />
+            
     	</EditText>
 
     	<Button
@@ -154,7 +154,7 @@
     	    android:enabled="false"
     	    android:inputType="none" >
 
-            <requestFocus />
+            
     	</EditText>
 
     	<Button
@@ -185,7 +185,7 @@
     	    android:enabled="false"
     	    android:inputType="none" >
 
-            <requestFocus />
+            
     	</EditText>
 
     	<Button 
@@ -216,7 +216,7 @@
     	    android:enabled="false"
     	    android:inputType="none" >
 
-            <requestFocus />
+            
     	</EditText>
 
     	<Button
