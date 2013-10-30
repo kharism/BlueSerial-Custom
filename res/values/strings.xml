@@ -19,5 +19,6 @@
     <string name="pref_text_buffer_summary">Change the receive text buffer size</string>
     <string name="title_activity_ibu">Kontrol Ibu</string>
     <string name="title_activity_anak">Anak</string>
+    <string name="title_activity_select_ibu">SelectIbuActivity</string>
 
 </resources>

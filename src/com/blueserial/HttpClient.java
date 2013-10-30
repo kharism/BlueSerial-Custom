@@ -4,15 +4,24 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.http.Header;
+import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.ParseException;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,7 +33,8 @@ import android.util.Log;
 @SuppressLint("NewApi")
 public class HttpClient {
 	private static final String TAG = "HttpClient";
-
+	private static ArrayList<Header> headers;
+	private static CookieStore cookieStore = new BasicCookieStore();
 	public static Object SendHttpPost(String URL, JSONObject jsonObjSend) {
 
 		try {
@@ -39,9 +49,36 @@ public class HttpClient {
 			httpPostRequest.setHeader("Accept", "application/json");
 			httpPostRequest.setHeader("Content-type", "application/json");
 			httpPostRequest.setHeader("Accept-Encoding", "gzip"); // only set this parameter if you would like to use gzip compression
-
+			if(headers!=null){
+				for(int i=0;i<headers.size();i++){
+					httpPostRequest.setHeader(headers.get(i));
+				}
+			}
 			long t = System.currentTimeMillis();
-			HttpResponse response = (HttpResponse) httpclient.execute(httpPostRequest);
+			HttpContext localContext = new BasicHttpContext();
+            // Bind custom cookie store to the local context
+            localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+            
+			HttpResponse response = (HttpResponse) httpclient.execute(httpPostRequest,localContext);
+			if(headers == null)
+			{
+				Header[] kk = response.getAllHeaders();
+				headers = new ArrayList<Header>();
+				String SetCookie = "";
+				for(int i=0;i<kk.length;i++){
+					if(kk[i].getName().equals("Set-Cookie"))
+					SetCookie+=kk[i].getValue();
+				}
+				headers.add(new BasicHeader("Set-Cookie", SetCookie));
+			}
+			else{
+				Header[] kk = response.getAllHeaders();
+				
+				for(int i=0;i<kk.length;i++){
+					if(kk[i].getName().equals("Set-Cookie"))
+					headers.add(kk[i]);
+				}
+			}
 			Log.i(TAG, "HTTPResponse received in [" + (System.currentTimeMillis()-t) + "ms]");
 
 			// Get hold of the response entity (-> the data):
@@ -118,8 +155,17 @@ public class HttpClient {
 		try {
 		    DefaultHttpClient httpClient = new DefaultHttpClient();
 		    HttpGet httpGet = new HttpGet(url);
-
-		    HttpResponse httpResponse = httpClient.execute(httpGet);
+		    if(headers!=null){
+				for(int i=0;i<headers.size();i++){
+					httpGet.setHeader(headers.get(i));
+					Log.i("HttpHeader", headers.get(i).getName()+":"+headers.get(i).getValue());
+				}
+			}
+		    HttpContext localContext = new BasicHttpContext();
+            // Bind custom cookie store to the local context
+            localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+            
+		    HttpResponse httpResponse = httpClient.execute(httpGet,localContext);
 		    HttpEntity httpEntity = httpResponse.getEntity();
 		    output = EntityUtils.toString(httpEntity);
 		    return output;

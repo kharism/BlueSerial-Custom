@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 @SuppressLint("NewApi")
 public class IbuActivity extends Activity {
+	public final static String FORM_KUNJUNGAN_TOKEN_URL = "http://gizi.inovasihusada.com/ws/ui/form/form-bumil-kunjungan?aksi=p&format=json";
 	private Button mBtnHbManual;
 	private Button buttonManualBerat;
 	private Button buttonManualTinggi;
@@ -49,6 +50,8 @@ public class IbuActivity extends Activity {
 	private ArrayList<BluetoothDevice> devices;
 	private boolean exitOnDisconect = true;
 	private boolean isLogedIn = false;
+	private String sessid;
+	private String token;
 	@Override
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
@@ -309,34 +312,49 @@ public class IbuActivity extends Activity {
 		protected Void doInBackground(Void... params) {
 			// TODO Auto-generated method stub
 			Map<String,String> login = new HashMap<String, String>();
-			login.put("username", "operator");
-			login.put("password", "operator");
+			login.put("username", "admin");
+			login.put("password", "admin");
 			JSONObject o = new JSONObject(login);
 			rr = (JSONObject)HttpClient.SendHttpPost("http://gizi.inovasihusada.com/ws/usr/login", o);
-			Log.i("JSON", rr.toString());
-			return null;
-		}
-		@Override
-		protected void onPostExecute(Void result) {
-			// TODO Auto-generated method stub
-			JSONObject message;
+			
 			try {
+				Log.i("JSON", rr.toString());
+				JSONObject message;
 				message = ((JSONObject)rr.get("message"));
 				//activity.setTitle(message.getString("pesan"));
 				strMessage = message.getString("pesan");
 				if(message.getString("tipe").equals("success")){
 					isLogedIn = true;
+					JSONObject form = (JSONObject) HttpClient.SendHttpGet(IbuActivity.FORM_KUNJUNGAN_TOKEN_URL);
+					Log.i("JSON",form.toString());
+					sessid = form.getString("sessid");
+					token = form.getString("token");
+					Log.d("TOKEN", token);
 				}
 				activity.runOnUiThread(new Runnable() {					
 					@Override
 					public void run() {
-						Toast.makeText(activity, strMessage, Toast.LENGTH_LONG).show();					
+						Toast.makeText(activity, sessid, Toast.LENGTH_LONG).show();					
 					}
 				});
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			catch (NullPointerException e){
+				activity.runOnUiThread(new Runnable() {					
+					@Override
+					public void run() {
+						Toast.makeText(activity, "Login Failed", Toast.LENGTH_LONG).show();					
+					}
+				});
+			}
+			return null;
+		}
+		@Override
+		protected void onPostExecute(Void result) {
+			// TODO Auto-generated method stub
+			
 			
 			super.onPostExecute(result);
 		}

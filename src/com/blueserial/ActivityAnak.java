@@ -62,6 +62,8 @@ public class ActivityAnak extends Activity {
 	private Handler loginHandler;
 	private Activity activity;
 	private boolean isLogedIn;
+	private String sessid;
+	private String editToken;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

@@ -6,7 +6,8 @@
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-	<uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="17" />
@@ -33,7 +34,6 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name="com.blueserial.PreferencesActivity" >
@@ -45,6 +45,15 @@
         <activity
             android:name="com.blueserial.ActivityAnak"
             android:label="@string/title_activity_anak" >
+        </activity>
+        <activity
+            android:name="com.blueserial.SelectIbuActivity"
+            android:label="@string/title_activity_select_ibu" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 
