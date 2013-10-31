@@ -15,22 +15,26 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.view.ViewPager.LayoutParams;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class SelectIbuActivity extends Activity {
 	public static String LIST_IBU = "http://gizi.inovasihusada.com/andro/antro/ibu";
+	public static String ID_IBU="com.bullshitdiarrha";
 	Activity activity;
 	boolean isLogedIn = false;
 	JSONAdapter mja;
@@ -39,12 +43,30 @@ public class SelectIbuActivity extends Activity {
 	String sessid;
 	JSONArray listIbu;
 	String token;
+	Button selectButton;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		activity = this;
 		setContentView(R.layout.activity_select_ibu);
 		lv = (ListView)findViewById(R.id.listIbu);
+		selectButton = (Button)findViewById(R.id.selectButton);
+		selectButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(getApplicationContext(), PilihKehamilanActivity.class);
+				try {
+					intent.putExtra(SelectIbuActivity.ID_IBU, mja.getItem(mja.getSelectedId()).getString("id"));
+					startActivity(intent);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					Log.i("pass error", "gagal dapat id ibu");
+					e.printStackTrace();
+				}
+			}
+		});
 		new loginTask().execute();
 		//pd = new ProgressDialog(getApplicationContext());
 		

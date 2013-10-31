@@ -30,14 +30,14 @@ public final class R {
         public static final int logo=0x7f020002;
     }
     public static final class id {
-        public static final int action_settings=0x7f0a002f;
+        public static final int action_settings=0x7f0a0034;
         public static final int btnClear=0x7f0a002a;
         public static final int btnClearInput=0x7f0a0022;
         public static final int btnConnect=0x7f0a001a;
         public static final int btnDisconnect=0x7f0a0021;
         public static final int btnSearch=0x7f0a0019;
         public static final int btnSend=0x7f0a002b;
-        public static final int button1=0x7f0a002d;
+        public static final int button1=0x7f0a002e;
         public static final int buttonAnak=0x7f0a001c;
         public static final int buttonAnakSet=0x7f0a0016;
         public static final int buttonBack=0x7f0a0001;
@@ -51,6 +51,7 @@ public final class R {
         public static final int buttonManualTinggi=0x7f0a0009;
         public static final int buttonManualTricep=0x7f0a0012;
         public static final int buttonMenu=0x7f0a0002;
+        public static final int buttonPilihKehamilan=0x7f0a002f;
         public static final int buttonSimpan=0x7f0a0003;
         public static final int chkReceiveText=0x7f0a0024;
         public static final int chkScroll=0x7f0a0023;
@@ -62,10 +63,13 @@ public final class R {
         public static final int editTextSubskapular=0x7f0a0014;
         public static final int editTextTinggi=0x7f0a0008;
         public static final int editTextTricep=0x7f0a0011;
-        public static final int listIbu=0x7f0a002c;
-        public static final int lstContent=0x7f0a002e;
+        public static final int listIbu=0x7f0a0031;
+        public static final int listKehamilan=0x7f0a002d;
+        public static final int listView1=0x7f0a0030;
+        public static final int lstContent=0x7f0a0033;
         public static final int lstDevices=0x7f0a0018;
         public static final int satuan=0x7f0a0028;
+        public static final int selectButton=0x7f0a0032;
         public static final int textBerat=0x7f0a0004;
         public static final int textHb=0x7f0a001d;
         public static final int textLika=0x7f0a000d;
@@ -73,6 +77,7 @@ public final class R {
         public static final int textSubskapular=0x7f0a0013;
         public static final int textTinggi=0x7f0a0007;
         public static final int textTricep=0x7f0a0010;
+        public static final int textView1=0x7f0a002c;
         public static final int textView2=0x7f0a0000;
         public static final int txtListHeading=0x7f0a0017;
         public static final int txtReceive=0x7f0a0026;
@@ -85,9 +90,10 @@ public final class R {
         public static final int activity_homescreen=0x7f030002;
         public static final int activity_ibu=0x7f030003;
         public static final int activity_main=0x7f030004;
-        public static final int activity_select_ibu=0x7f030005;
-        public static final int ibu=0x7f030006;
-        public static final int list_item=0x7f030007;
+        public static final int activity_pilih_kehamilan=0x7f030005;
+        public static final int activity_select_ibu=0x7f030006;
+        public static final int ibu=0x7f030007;
+        public static final int list_item=0x7f030008;
     }
     public static final class menu {
         public static final int anak=0x7f090000;
@@ -95,7 +101,8 @@ public final class R {
         public static final int homescreen=0x7f090002;
         public static final int ibu=0x7f090003;
         public static final int main=0x7f090004;
-        public static final int select_ibu=0x7f090005;
+        public static final int pilih_kehamilan=0x7f090005;
+        public static final int select_ibu=0x7f090006;
     }
     public static final class string {
         public static final int action_settings=0x7f070001;
@@ -116,6 +123,7 @@ public final class R {
         public static final int title_activity_helpscreen=0x7f070002;
         public static final int title_activity_ibu=0x7f070010;
         public static final int title_activity_main=0x7f070005;
+        public static final int title_activity_pilih_kehamilan=0x7f070013;
         public static final int title_activity_select_ibu=0x7f070012;
     }
     public static final class style {
