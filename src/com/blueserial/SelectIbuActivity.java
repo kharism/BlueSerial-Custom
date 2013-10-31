@@ -15,12 +15,15 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v4.view.ViewPager.LayoutParams;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -106,7 +109,17 @@ public class SelectIbuActivity extends Activity {
 							    }
 							    mja = new JSONAdapter(activity, R.layout.list_item, list);
 							    lv.setAdapter(mja);
-							    mja.notifyDataSetChanged();							    
+							    lv.setOnItemClickListener(new OnItemClickListener() {
+
+									@Override
+									public void onItemClick(
+											AdapterView<?> parent, View view,
+											int position, long id) {
+											mja.setSelectedId(position);
+											mja.notifyDataSetChanged();
+									}
+							    	
+								});
 							}
 						});
 						
@@ -149,6 +162,7 @@ public class SelectIbuActivity extends Activity {
 		HashMap<JSONObject, Integer> mIdMap = new HashMap<JSONObject, Integer>();
 		List<JSONObject> jlist;
 		private Context context;
+		private int selectedId;
 		public JSONAdapter(Context context, int textViewResourceId,
 		        List<JSONObject> objects) {
 			super(context,textViewResourceId);
@@ -157,6 +171,12 @@ public class SelectIbuActivity extends Activity {
 			for (int i = 0; i < objects.size(); ++i) {
 		        mIdMap.put(objects.get(i), i);
 		  } 
+		}
+		public void setSelectedId(int selectedId) {
+			this.selectedId = selectedId;
+		}
+		public int getSelectedId() {
+			return selectedId;
 		}
 		@Override
 	    public long getItemId(int position) {
@@ -195,6 +215,9 @@ public class SelectIbuActivity extends Activity {
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}
+			if(position == selectedId){
+				vi.setBackgroundColor(Color.GRAY);
 			}
 			return vi;
 		}

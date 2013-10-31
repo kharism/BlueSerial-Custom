@@ -22,10 +22,14 @@ import android.os.Handler;
 import android.os.Looper;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
@@ -160,12 +164,28 @@ public class ActivityAnak extends Activity {
 			}
 		});
 		new loginTask().execute();
+        IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        this.registerReceiver(mReceiver, filter3);
 		for(int i=0;i<devices.size();i++){
-			new ConnectBT(devices.get(i)).execute();
-			
+			new ConnectBT(devices.get(i)).execute();			
 		}
 	}
-	
+	private final BroadcastReceiver mReceiver = new BroadcastReceiver(){
+
+		@Override
+		public void onReceive(Context arg0, Intent arg1) {
+			// TODO Auto-generated method stub
+	        String action = arg1.getAction();
+			final BluetoothDevice device = arg1.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+	        if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)){
+	        	AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+	        	builder.setMessage("device "+device.getName()+" disconected");
+	        	AlertDialog dialog = builder.create();
+	        	dialog.show();
+	        }
+		}
+		
+	};
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// TODO Auto-generated method stub
@@ -175,8 +195,7 @@ public class ActivityAnak extends Activity {
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
-		}
-		
+		}		
 	}
 
 	@Override
@@ -193,6 +212,7 @@ public class ActivityAnak extends Activity {
 			u.stop();
 			readThreads.remove(u);
 		}
+		this.unregisterReceiver(mReceiver);
 		super.onBackPressed();
 	}
 	private class ConnectBT extends AsyncTask<Void, Void, Void> {
@@ -267,6 +287,7 @@ public class ActivityAnak extends Activity {
 
 		private boolean bStop = false;
 		private Thread t;
+		boolean threadStop=false;
 		BluetoothSocket mBTSocket;
 		Map<String,EditText> maps;
 		StringHandler sh;
@@ -293,7 +314,7 @@ public class ActivityAnak extends Activity {
 
 			try {
 				inputStream = mBTSocket.getInputStream();
-				while (!bStop) {
+				while (!bStop && !threadStop) {
 					byte[] buffer = new byte[256];
 					if (inputStream.available() > 0) {
 						inputStream.read(buffer);
@@ -332,7 +353,8 @@ public class ActivityAnak extends Activity {
 						}
 
 					}
-					Thread.sleep(500);
+					
+					Thread.sleep(250);
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -365,8 +387,11 @@ public class ActivityAnak extends Activity {
 			login.put("username", "operator");
 			login.put("password", "operator");
 			JSONObject o = new JSONObject(login);
+			try{
 			rr = (JSONObject)HttpClient.SendHttpPost("http://gizi.inovasihusada.com/ws/usr/login", o);
-			Log.i("JSON", rr.toString());
+			Log.i("JSON", rr.toString());}catch(Exception e){
+				
+			}
 			return null;
 		}
 		@Override
@@ -377,7 +402,7 @@ public class ActivityAnak extends Activity {
 				message = ((JSONObject)rr.get("message"));
 				//activity.setTitle(message.getString("pesan"));
 				strMessage = message.getString("pesan");
-				if(message.getString("tipe").equals("success")){
+				if(message.getString("tipe").equals("success")||(message.getString("tipe").equals("error")&&message.getString("pesan").equalsIgnoreCase("Username sudah login"))){
 					isLogedIn = true;
 				}
 				
@@ -390,6 +415,13 @@ public class ActivityAnak extends Activity {
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} catch (Exception ex){
+				activity.runOnUiThread(new Runnable() {					
+					@Override
+					public void run() {
+						Toast.makeText(activity, "Failed to Login", Toast.LENGTH_LONG).show();					
+					}
+				});
 			}
 			
 			super.onPostExecute(result);

@@ -17,11 +17,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
@@ -133,13 +137,30 @@ public class IbuActivity extends Activity {
 			}
 		});
 		new loginTask().execute();
+        IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        this.registerReceiver(mReceiver, filter3);
 		for(int i=0;i<devices.size();i++){
 			new ConnectBT(devices.get(i)).execute();
 		
 			
 		}
 	}
+	private final BroadcastReceiver mReceiver = new BroadcastReceiver(){
 
+		@Override
+		public void onReceive(Context arg0, Intent arg1) {
+			// TODO Auto-generated method stub
+	        String action = arg1.getAction();
+			final BluetoothDevice device = arg1.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+	        if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)){
+	        	AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+	        	builder.setMessage("device "+device.getName()+" disconected");
+	        	AlertDialog dialog = builder.create();
+	        	dialog.show();
+	        }
+		}
+		
+	};
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -323,7 +344,7 @@ public class IbuActivity extends Activity {
 				message = ((JSONObject)rr.get("message"));
 				//activity.setTitle(message.getString("pesan"));
 				strMessage = message.getString("pesan");
-				if(message.getString("tipe").equals("success")){
+				if(message.getString("tipe").equals("success")||(message.getString("tipe").equals("error")&&message.getString("pesan").equalsIgnoreCase("Username sudah login"))){
 					isLogedIn = true;
 					JSONObject form = (JSONObject) HttpClient.SendHttpGet(IbuActivity.FORM_KUNJUNGAN_TOKEN_URL);
 					Log.i("JSON",form.toString());
