@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.blueserial.R;
 
 import android.annotation.SuppressLint;
@@ -57,8 +60,9 @@ public class Homescreen extends Activity {
 	private Button mButtonAnak;
     private ArrayAdapter<String> mPairedDevicesArrayAdapter;
     private ArrayAdapter<String> mNewDevicesArrayAdapter;
-
-	private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    private JSONObject kehamilan;
+	
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -98,6 +102,7 @@ public class Homescreen extends Activity {
 	private static final String TAG = "BlueTest5-Homescreen";
 	public static final String DEVICES_LISTS = "com.blueserial.devices";
 	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -105,7 +110,13 @@ public class Homescreen extends Activity {
 		setContentView(R.layout.activity_homescreen);
 		ActivityHelper.initialize(this); //This is to ensure that the rotation persists across activities and not just this one
 		Log.d(TAG, "Created");
-
+		Intent intent = getIntent();
+		try {
+			kehamilan = new JSONObject(intent.getExtras().getString(PilihKehamilanActivity.KEHAMILAN_DIPILIH));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		mBtnSearch = (Button) findViewById(R.id.btnSearch);
 		mBtnConnect = (Button) findViewById(R.id.btnConnect);
 		mButtonAnak = (Button) findViewById(R.id.buttonAnak);

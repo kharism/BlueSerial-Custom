@@ -33,9 +33,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
-@SuppressLint("NewApi")
+@SuppressLint({ "NewApi", "ShowToast" })
 public class IbuActivity extends Activity {
 	public final static String FORM_KUNJUNGAN_TOKEN_URL = "http://gizi.inovasihusada.com/ws/ui/form/form-bumil-kunjungan?aksi=p&format=json";
 	private Button mBtnHbManual;
@@ -56,6 +57,7 @@ public class IbuActivity extends Activity {
 	private boolean isLogedIn = false;
 	private String sessid;
 	private String token;
+	private boolean kakiBengkak;
 	@Override
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
@@ -136,13 +138,28 @@ public class IbuActivity extends Activity {
 				}
 			}
 		});
-		new loginTask().execute();
+		//new loginTask().execute();
         IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
         this.registerReceiver(mReceiver, filter3);
 		for(int i=0;i<devices.size();i++){
 			new ConnectBT(devices.get(i)).execute();
 		
 			
+		}
+	}
+	public void onRadioButtonClicked(View view) {
+	    boolean checked = ((RadioButton)view).isChecked();
+		switch (view.getId()) {
+		case R.id.radioNo:
+			if(checked)
+			kakiBengkak = false;
+			break;
+		case R.id.radioYes:
+			if(checked)
+			kakiBengkak = true;
+			break;
+		default:
+			break;
 		}
 	}
 	private final BroadcastReceiver mReceiver = new BroadcastReceiver(){

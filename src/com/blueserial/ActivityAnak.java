@@ -38,6 +38,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 @SuppressLint("ShowToast")
@@ -186,6 +187,28 @@ public class ActivityAnak extends Activity {
 		}
 		
 	};
+	private boolean kakiBengkak;
+	private boolean berdiri;
+	public void onRadioButtonClicked(View view) {
+	    boolean checked = ((RadioButton)view).isChecked();
+		switch (view.getId()) {
+		case R.id.radioTidak:
+			if(checked)
+			kakiBengkak = false;
+			break;
+		case R.id.radioYa:
+			if(checked)
+			kakiBengkak = true;
+			break;
+		case R.id.radioBerdiri:
+			berdiri = true;
+			break;
+		case R.id.radioTerlentang:
+			berdiri = false;
+		default:
+			break;
+		}
+	}
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// TODO Auto-generated method stub

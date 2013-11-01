@@ -19,6 +19,7 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -34,6 +35,7 @@ public class PilihKehamilanActivity extends Activity {
 	Activity activity;
 	JSONAdapter mja;
 	public static final String LIST_KEHAMILAN="http://gizi.inovasihusada.com/ws/bumil/hamil/";
+	public static final String KEHAMILAN_DIPILIH="KEHAMILAN_DIPILIH";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -43,6 +45,16 @@ public class PilihKehamilanActivity extends Activity {
 		listKehamilan = (ListView)findViewById(R.id.listKehamilan);
 		buttonPilihKehamilan = (Button)findViewById(R.id.buttonPilihKehamilan);
 		idIbu = intent.getExtras().getString(SelectIbuActivity.ID_IBU);
+		buttonPilihKehamilan.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				JSONArray kehamilan = mja.getItem(mja.getSelectedId());
+				Intent i = new Intent(getApplicationContext(),Homescreen.class);
+				i.putExtra(PilihKehamilanActivity.KEHAMILAN_DIPILIH, kehamilan.toString());
+				startActivity(i);
+			}
+		});
 		new GetKehamilanTask().execute();
 	}
 
