@@ -21,5 +21,7 @@
     <string name="title_activity_anak">Anak</string>
     <string name="title_activity_select_ibu">SelectIbuActivity</string>
     <string name="title_activity_pilih_kehamilan">PilihKehamilanActivity</string>
+    <string name="title_activity_select_mode">SelectModeActivity</string>
+    <string name="title_activity_select_anak">SelectAnakActivity</string>
 
 </resources>

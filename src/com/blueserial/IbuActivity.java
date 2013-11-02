@@ -39,6 +39,7 @@ import android.widget.Toast;
 @SuppressLint({ "NewApi", "ShowToast" })
 public class IbuActivity extends Activity {
 	public final static String FORM_KUNJUNGAN_TOKEN_URL = "http://gizi.inovasihusada.com/ws/ui/form/form-bumil-kunjungan?aksi=p&format=json";
+	public final static String FORM_ACTION = "http://gizi.inovasihusada.com/ws/bumil/kunjungan/";
 	private Button mBtnHbManual;
 	private Button buttonManualBerat;
 	private Button buttonManualTinggi;
@@ -58,6 +59,7 @@ public class IbuActivity extends Activity {
 	private String sessid;
 	private String token;
 	private boolean kakiBengkak;
+	private JSONObject kehamilan;
 	@Override
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
@@ -91,6 +93,12 @@ public class IbuActivity extends Activity {
 		editTextBerat = (EditText) findViewById(R.id.editTextBerat);
 		mDeviceUUID = UUID.fromString(b.getString(Homescreen.DEVICE_UUID));
 		devices = b.getParcelableArrayList(Homescreen.DEVICES_LISTS);
+		try {
+			kehamilan = new JSONObject(b.getString(PilihKehamilanActivity.KEHAMILAN_DIPILIH));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		mBtnHbManual.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -143,8 +151,6 @@ public class IbuActivity extends Activity {
         this.registerReceiver(mReceiver, filter3);
 		for(int i=0;i<devices.size();i++){
 			new ConnectBT(devices.get(i)).execute();
-		
-			
 		}
 	}
 	public void onRadioButtonClicked(View view) {

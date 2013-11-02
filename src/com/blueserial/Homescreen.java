@@ -94,6 +94,7 @@ public class Homescreen extends Activity {
 	// (http://developer.android.com/reference/android/bluetooth/BluetoothDevice.html#createInsecureRfcommSocketToServiceRecord%28java.util.UUID%29)
 
 	private int mBufferSize = 50000; //Default
+	private JSONObject anak;
 	public static final String DEVICE_EXTRA = "com.blueserial.SOCKET";
 	public static final String DEVICE_UUID = "com.blueserial.uuid";
 	private static final String DEVICE_LIST = "com.blueserial.devicelist";
@@ -111,11 +112,20 @@ public class Homescreen extends Activity {
 		ActivityHelper.initialize(this); //This is to ensure that the rotation persists across activities and not just this one
 		Log.d(TAG, "Created");
 		Intent intent = getIntent();
+		if(intent.getExtras().containsKey(PilihKehamilanActivity.KEHAMILAN_DIPILIH))
 		try {
 			kehamilan = new JSONObject(intent.getExtras().getString(PilihKehamilanActivity.KEHAMILAN_DIPILIH));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		else if(intent.getExtras().containsKey(SelectAnakActivity.ID_ANAK)){
+			try {
+				anak = new JSONObject(intent.getExtras().getString(SelectAnakActivity.ID_ANAK));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		mBtnSearch = (Button) findViewById(R.id.btnSearch);
 		mBtnConnect = (Button) findViewById(R.id.btnConnect);
@@ -182,6 +192,9 @@ public class Homescreen extends Activity {
 					ArrayList<BluetoothDevice> devices = (ArrayList<BluetoothDevice>) ((MyAdapter) (mLstDevices.getAdapter())).getEntireList();
 					Intent intent = new Intent(getApplicationContext(), ActivityAnak.class);
 					intent.putExtra(DEVICES_LISTS, devices);
+					try{
+					intent.putExtra(SelectAnakActivity.ID_ANAK, anak.toString());
+					}catch(NullPointerException ex){}
 					intent.putExtra(DEVICE_UUID, mDeviceUUID.toString());
 					intent.putExtra(BUFFER_SIZE, mBufferSize);
 					startActivity(intent);
@@ -196,7 +209,9 @@ public class Homescreen extends Activity {
 				if(mLstDevices!=null){
 				ArrayList<BluetoothDevice> devices = (ArrayList<BluetoothDevice>) ((MyAdapter) (mLstDevices.getAdapter())).getEntireList();
 				Intent intent = new Intent(getApplicationContext(), IbuActivity.class);
-				intent.putExtra(DEVICES_LISTS, devices);
+				intent.putExtra(DEVICES_LISTS, devices);try{
+				intent.putExtra(PilihKehamilanActivity.KEHAMILAN_DIPILIH, kehamilan.toString());
+				}catch(NullPointerException ex){}
 				intent.putExtra(DEVICE_UUID, mDeviceUUID.toString());
 				intent.putExtra(BUFFER_SIZE, mBufferSize);
 				startActivity(intent);

@@ -45,6 +45,7 @@ import android.widget.Toast;
 public class ActivityAnak extends Activity {
 	public final static String BALITA_LIST = "http://gizi.inovasihusada.com/andro/antro/balita/";
 	public final static String LOGIN = "http://gizi.inovasihusada.com/ws/usr/login/";
+	public final static String FORM_KUNJUNGAN_TOKEN_URL = "http://gizi.inovasihusada.com/ws/ui/form/form-anak-kunjungan?aksi=p&format=json";
 	private Button buttonManualBerat;
 	private Button buttonManualTinggi;
 	private Button buttonManualLila;
@@ -69,6 +70,7 @@ public class ActivityAnak extends Activity {
 	private boolean isLogedIn;
 	private String sessid;
 	private String editToken;
+	private JSONObject anak;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -95,7 +97,12 @@ public class ActivityAnak extends Activity {
 		
 		mDeviceUUID = UUID.fromString(b.getString(Homescreen.DEVICE_UUID));
 		devices = b.getParcelableArrayList(Homescreen.DEVICES_LISTS);
-		
+		try {
+			anak = new JSONObject(b.getString(SelectAnakActivity.ID_ANAK));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		buttonManualBerat.setOnClickListener(new OnClickListener() {
 			
@@ -164,7 +171,7 @@ public class ActivityAnak extends Activity {
 				}
 			}
 		});
-		new loginTask().execute();
+		//new loginTask().execute();
         IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
         this.registerReceiver(mReceiver, filter3);
 		for(int i=0;i<devices.size();i++){

@@ -60,13 +60,24 @@
             android:label="@string/title_activity_select_ibu" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name="com.blueserial.PilihKehamilanActivity"
             android:label="@string/title_activity_pilih_kehamilan" >
+        </activity>
+        <activity
+            android:name="com.blueserial.SelectModeActivity"
+            android:label="@string/title_activity_select_mode" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.blueserial.SelectAnakActivity"
+            android:label="@string/title_activity_select_anak" >
         </activity>
     </application>
 
