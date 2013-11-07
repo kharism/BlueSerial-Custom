@@ -215,7 +215,7 @@
     	    android:id="@+id/editTextSubskapular"
     	    android:layout_width="wrap_content"
     	    android:layout_height="wrap_content"
-    	    android:layout_weight="1.11"
+    	    android:layout_weight="1.41"
     	    android:ems="10"
     	    android:enabled="false"
     	    android:inputType="none" >
@@ -243,10 +243,9 @@
 		    android:text="Metode pengukuran" /> 
 
 		<RadioGroup
-		    android:layout_width="347dp"
+		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-		    android:orientation="horizontal" 
-		    android:layout_weight="0.4">
+		    android:orientation="horizontal" >
 
 			<RadioButton android:id="@+id/radioBerdiri"
 		        android:layout_width="wrap_content"
@@ -271,22 +270,25 @@
 		    android:layout_height="wrap_content"
 		    android:layout_weight="0.56"
 		    android:text="Endema" /> 
+
 		<RadioGroup
-    	    android:layout_width="492dp"
-    	    android:layout_height="wrap_content"
-    	    android:layout_weight="0.5"
-    	    android:orientation="horizontal" >
+		    android:layout_width="190dp"
+		    android:layout_height="wrap_content"
+		    android:orientation="horizontal" >
 
 			<RadioButton android:id="@+id/radioYa"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:text="Ya"
 		        android:onClick="onRadioButtonClicked"/>
-		    <RadioButton android:id="@+id/radioTidak"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:text="Tidak"
-		        android:onClick="onRadioButtonClicked"/>		    	    	    
+
+			<RadioButton
+			    android:id="@+id/radioTidak"
+			    android:layout_width="100dp"
+			    android:layout_height="wrap_content"
+			    android:onClick="onRadioButtonClicked"
+			    android:text="Tidak" />
+		    	    	    
     	</RadioGroup>                   
     </LinearLayout>
     <Button

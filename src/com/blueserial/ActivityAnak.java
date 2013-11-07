@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,9 +44,10 @@ import android.widget.Toast;
 
 @SuppressLint("ShowToast")
 public class ActivityAnak extends Activity {
-	public final static String BALITA_LIST = "http://gizi.inovasihusada.com/andro/antro/balita/";
-	public final static String LOGIN = "http://gizi.inovasihusada.com/ws/usr/login/";
-	public final static String FORM_KUNJUNGAN_TOKEN_URL = "http://gizi.inovasihusada.com/ws/ui/form/form-anak-kunjungan?aksi=p&format=json";
+	public final static String BALITA_LIST = "http://gia.karyateknologiinformasi.com/andro/antro/balita/";
+	public final static String LOGIN = "http://gia.karyateknologiinformasi.com/ws/usr/login/";
+	public final static String FORM_KUNJUNGAN_TOKEN_URL = "http://gia.karyateknologiinformasi.com/ws/ui/form/form-anak-kunjungan?aksi=p&format=json";
+	public final static String FORM_ACTION="http://gia.karyateknologiinformasi.com/ws/anak/kunjungan/";
 	private Button buttonManualBerat;
 	private Button buttonManualTinggi;
 	private Button buttonManualLila;
@@ -53,6 +55,7 @@ public class ActivityAnak extends Activity {
 	private Button buttonManualTricep;
 	private Button buttonManualSubskapular;
 	private Button buttonAnakSet;
+	private Button buttonSimpan;
 	
 	private EditText editTextBerat;
 	private EditText editTextTinggi;
@@ -87,6 +90,7 @@ public class ActivityAnak extends Activity {
 		buttonManualTricep = (Button) findViewById(R.id.buttonManualTricep);
 		buttonManualSubskapular = (Button) findViewById(R.id.buttonManualSubskapular);
 		buttonAnakSet = (Button) findViewById(R.id.buttonAnakSet);
+		buttonSimpan = (Button) findViewById(R.id.buttonSimpan);
 		
 		editTextBerat = (EditText) findViewById(R.id.editTextBerat);
 		editTextTinggi = (EditText) findViewById(R.id.editTextTinggi);
@@ -113,7 +117,13 @@ public class ActivityAnak extends Activity {
 				editTextBerat.setEnabled(true);
 			}
 		});
-		
+		buttonSimpan.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				new SendDataTask().execute();
+			}
+		});
 		buttonManualTinggi.setOnClickListener(new OnClickListener() {
 					
 					@Override
@@ -171,6 +181,7 @@ public class ActivityAnak extends Activity {
 				}
 			}
 		});
+		new GetTokenTask().execute();
 		//new loginTask().execute();
         IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
         this.registerReceiver(mReceiver, filter3);
@@ -244,6 +255,53 @@ public class ActivityAnak extends Activity {
 		}
 		this.unregisterReceiver(mReceiver);
 		super.onBackPressed();
+	}
+	private class SendDataTask extends AsyncTask<Void, Void, Void>{
+		JSONObject response;
+		
+		@Override
+		protected Void doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+			JSONObject o = new JSONObject();
+			try {
+				o.put("token", editToken);
+				Date date = new Date();
+				o.put("tanggal", date.getDate()+"/"+date.getMonth()+"/"+date.getYear());
+				o.put("bb", editTextBerat.getText());
+				o.put("tb", editTextTinggi.getText());
+				o.put("pengukuran", berdiri?"BERDIRI":"TERLENTANG");
+				o.put("edema",kakiBengkak?1:0);
+				o.put("lika", editTextLika.getText());
+				o.put("lila", editTextLila.getText());
+				o.put("tlt", editTextTricep.getText());
+				o.put("tls", editTextSubskapular.getText());
+				response = (JSONObject) HttpClient.SendHttpPost(ActivityAnak.FORM_ACTION, o);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return null;
+		}
+		@Override
+		protected void onPostExecute(Void result) {
+			// TODO Auto-generated method stub
+			activity.runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					try {
+						Toast.makeText(activity, response.getString("pesan"), Toast.LENGTH_SHORT).show();
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			});
+			super.onPostExecute(result);
+		}
+		
+		
 	}
 	private class ConnectBT extends AsyncTask<Void, Void, Void> {
 		private boolean mConnectSuccessful = true;
@@ -407,53 +465,30 @@ public class ActivityAnak extends Activity {
 		}
 
 	}
-	private class loginTask extends AsyncTask<Void, Void, Void>{
+	private class GetTokenTask extends AsyncTask<Void, Void, Void>{
 		JSONObject rr;
 		String strMessage;
 		@Override
 		protected Void doInBackground(Void... params) {
-			// TODO Auto-generated method stub
-			Map<String,String> login = new HashMap<String, String>();
-			login.put("username", "operator");
-			login.put("password", "operator");
-			JSONObject o = new JSONObject(login);
-			try{
-			rr = (JSONObject)HttpClient.SendHttpPost("http://gizi.inovasihusada.com/ws/usr/login", o);
-			Log.i("JSON", rr.toString());}catch(Exception e){
-				
+			rr = (JSONObject)HttpClient.SendHttpGet(ActivityAnak.FORM_KUNJUNGAN_TOKEN_URL);
+			try {
+				sessid = rr.getString("sessid");
+				editToken = rr.getString("token");				
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			return null;
 		}
 		@Override
 		protected void onPostExecute(Void result) {
-			// TODO Auto-generated method stub
-			JSONObject message;
-			try {
-				message = ((JSONObject)rr.get("message"));
-				//activity.setTitle(message.getString("pesan"));
-				strMessage = message.getString("pesan");
-				if(message.getString("tipe").equals("success")||(message.getString("tipe").equals("error")&&message.getString("pesan").equalsIgnoreCase("Username sudah login"))){
-					isLogedIn = true;
+			activity.runOnUiThread(new Runnable() {				
+				@Override
+				public void run() {
+					String h = editToken;
+					Toast.makeText(activity, editToken, Toast.LENGTH_SHORT).show();
 				}
-				
-				activity.runOnUiThread(new Runnable() {					
-					@Override
-					public void run() {
-						Toast.makeText(activity, strMessage, Toast.LENGTH_LONG).show();					
-					}
-				});
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (Exception ex){
-				activity.runOnUiThread(new Runnable() {					
-					@Override
-					public void run() {
-						Toast.makeText(activity, "Failed to Login", Toast.LENGTH_LONG).show();					
-					}
-				});
-			}
-			
+			});
 			super.onPostExecute(result);
 		}
 	}

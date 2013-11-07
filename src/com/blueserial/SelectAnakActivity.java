@@ -34,6 +34,7 @@ import android.widget.AdapterView.OnItemClickListener;
 public class SelectAnakActivity extends Activity {
 	public static String LIST_ANAK = "http://gia.karyateknologiinformasi.com/andro/antro/balita";
 	public static final String ID_ANAK = "SELECTANAK.IDANAK";
+	public static final String NAMA_ANAK = "SELECTANAK.NAMAANAK";
 	Activity activity;
 	boolean isLogedIn = false;
 	JSONAdapter mja;
@@ -50,7 +51,7 @@ public class SelectAnakActivity extends Activity {
 		activity = this;
 		selectButton = (Button)findViewById(R.id.selectButton);
 		lv = (ListView)findViewById(R.id.listAnak);
-			selectButton.setOnClickListener(new OnClickListener() {
+		selectButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
@@ -87,7 +88,7 @@ public class SelectAnakActivity extends Activity {
 			login.put("username", "admin");
 			login.put("password", "admin");
 			JSONObject o = new JSONObject(login);
-			rr = (JSONObject)HttpClient.SendHttpPost("http://gizi.inovasihusada.com/ws/usr/login", o);
+			rr = (JSONObject)HttpClient.SendHttpPost(SelectIbuActivity.LOGIN_IBU, o);
 			
 			try {
 				Log.i("JSON", rr.toString());
