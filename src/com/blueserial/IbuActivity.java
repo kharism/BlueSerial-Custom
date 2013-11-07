@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,17 +35,20 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 @SuppressLint({ "NewApi", "ShowToast" })
 public class IbuActivity extends Activity {
-	public final static String FORM_KUNJUNGAN_TOKEN_URL = "http://gizi.inovasihusada.com/ws/ui/form/form-bumil-kunjungan?aksi=p&format=json";
-	public final static String FORM_ACTION = "http://gizi.inovasihusada.com/ws/bumil/kunjungan/";
+	public final static String FORM_KUNJUNGAN_TOKEN_URL = "http://gia.karyateknologiinformasi.com/ws/ui/form/form-bumil-kunjungan?aksi=p&format=json";
+	public final static String FORM_ACTION = "http://gia.karyateknologiinformasi.com/ws/bumil/kunjungan/";
 	private Button mBtnHbManual;
 	private Button buttonManualBerat;
 	private Button buttonManualTinggi;
 	private Button buttonManualLila;
 	private Button buttonIbuSet;
+	private Button buttonSimpan;
+	private TextView labelIbu;
 	private EditText editHb;
 	private EditText editTextLila;
 	private EditText editTextTinggi;
@@ -59,7 +63,7 @@ public class IbuActivity extends Activity {
 	private String sessid;
 	private String token;
 	private boolean kakiBengkak;
-	private JSONObject kehamilan;
+	private JSONArray kehamilan;
 	@Override
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
@@ -80,6 +84,8 @@ public class IbuActivity extends Activity {
 		readThreads = new ArrayList<Runnable>();
 		Intent intent = getIntent();
 		Bundle b = intent.getExtras();
+		labelIbu = (TextView)findViewById(R.id.textView2);
+		labelIbu.setText(b.getString(SelectIbuActivity.NAMA_IBU));
 		activity = this;
 		editHb = (EditText) findViewById(R.id.editHb);
 		mBtnHbManual = (Button) findViewById(R.id.buttonManualHb);
@@ -87,6 +93,7 @@ public class IbuActivity extends Activity {
 		buttonManualTinggi = (Button) findViewById(R.id.buttonManualTinggi);
 		buttonManualLila = (Button) findViewById(R.id.buttonManualLila);
 		buttonIbuSet = (Button) findViewById(R.id.buttonIbuSet);
+		buttonSimpan = (Button) findViewById(R.id.buttonSimpan);
 		editHb = (EditText) findViewById(R.id.editHb);
 		editTextLila = (EditText) findViewById(R.id.editTextLila);
 		editTextTinggi = (EditText) findViewById(R.id.editTextTinggi);
@@ -94,7 +101,7 @@ public class IbuActivity extends Activity {
 		mDeviceUUID = UUID.fromString(b.getString(Homescreen.DEVICE_UUID));
 		devices = b.getParcelableArrayList(Homescreen.DEVICES_LISTS);
 		try {
-			kehamilan = new JSONObject(b.getString(PilihKehamilanActivity.KEHAMILAN_DIPILIH));
+			kehamilan = new JSONArray(b.getString(PilihKehamilanActivity.KEHAMILAN_DIPILIH));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -116,7 +123,14 @@ public class IbuActivity extends Activity {
 				editTextBerat.setEnabled(true);
 			}
 		});
-		
+		buttonSimpan.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				new SendData().execute();;
+			}
+		});
 		buttonManualTinggi.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -146,6 +160,7 @@ public class IbuActivity extends Activity {
 				}
 			}
 		});
+		new GetToken().execute();
 		//new loginTask().execute();
         IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
         this.registerReceiver(mReceiver, filter3);
@@ -349,38 +364,18 @@ public class IbuActivity extends Activity {
 		}
 
 	}
-	private class loginTask extends AsyncTask<Void, Void, Void>{
+	private class GetToken extends AsyncTask<Void, Void, Void>{
 		JSONObject rr;
 		String strMessage;
 		@Override
 		protected Void doInBackground(Void... params) {
 			// TODO Auto-generated method stub
-			Map<String,String> login = new HashMap<String, String>();
-			login.put("username", "admin");
-			login.put("password", "admin");
-			JSONObject o = new JSONObject(login);
-			rr = (JSONObject)HttpClient.SendHttpPost("http://gizi.inovasihusada.com/ws/usr/login", o);
-			
 			try {
-				Log.i("JSON", rr.toString());
-				JSONObject message;
-				message = ((JSONObject)rr.get("message"));
-				//activity.setTitle(message.getString("pesan"));
-				strMessage = message.getString("pesan");
-				if(message.getString("tipe").equals("success")||(message.getString("tipe").equals("error")&&message.getString("pesan").equalsIgnoreCase("Username sudah login"))){
-					isLogedIn = true;
-					JSONObject form = (JSONObject) HttpClient.SendHttpGet(IbuActivity.FORM_KUNJUNGAN_TOKEN_URL);
-					Log.i("JSON",form.toString());
-					sessid = form.getString("sessid");
-					token = form.getString("token");
-					Log.d("TOKEN", token);
-				}
-				activity.runOnUiThread(new Runnable() {					
-					@Override
-					public void run() {
-						Toast.makeText(activity, sessid, Toast.LENGTH_LONG).show();					
-					}
-				});
+				JSONObject form = (JSONObject) HttpClient.SendHttpGet(IbuActivity.FORM_KUNJUNGAN_TOKEN_URL);
+				Log.i("JSON",form.toString());
+				sessid = form.getString("sessid");
+				token = form.getString("token");
+				Log.d("TOKEN", token);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -399,9 +394,48 @@ public class IbuActivity extends Activity {
 		protected void onPostExecute(Void result) {
 			// TODO Auto-generated method stub
 			
-			
 			super.onPostExecute(result);
 		}
+	}
+	private class SendData extends AsyncTask<Void, Void, Void>{
+
+		JSONObject l;
+		@Override
+		protected Void doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+			JSONObject o = new JSONObject();
+			try {
+				o.put("token", token);
+				o.put("kaki_bengkak", kakiBengkak?"1":"2");
+				o.put("berat", editTextBerat.getText());
+				l = (JSONObject)HttpClient.SendHttpPost(IbuActivity.FORM_ACTION+kehamilan.getString(0), o);
+				
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return null;
+		}
+		@Override
+		protected void onPostExecute(Void result) {
+			// TODO Auto-generated method stub
+			activity.runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					try {
+						Toast.makeText(activity, l.getString("pesan"), Toast.LENGTH_SHORT).show();
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			});
+			super.onPostExecute(result);
+		}
+		
 	}
 	private class DisConnectBT extends AsyncTask<Void, Void, Void> {
 

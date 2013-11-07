@@ -32,7 +32,7 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class SelectAnakActivity extends Activity {
-	public static String LIST_ANAK = "http://gizi.inovasihusada.com/andro/antro/balita";
+	public static String LIST_ANAK = "http://gia.karyateknologiinformasi.com/andro/antro/balita";
 	public static final String ID_ANAK = "SELECTANAK.IDANAK";
 	Activity activity;
 	boolean isLogedIn = false;

@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -58,9 +59,10 @@ public class Homescreen extends Activity {
 	private BluetoothAdapter mBTAdapter;
 	private Button mButtonIbu;
 	private Button mButtonAnak;
+	private String namaIbu;
     private ArrayAdapter<String> mPairedDevicesArrayAdapter;
     private ArrayAdapter<String> mNewDevicesArrayAdapter;
-    private JSONObject kehamilan;
+    private JSONArray kehamilan;
 	
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -114,7 +116,7 @@ public class Homescreen extends Activity {
 		Intent intent = getIntent();
 		if(intent.getExtras().containsKey(PilihKehamilanActivity.KEHAMILAN_DIPILIH))
 		try {
-			kehamilan = new JSONObject(intent.getExtras().getString(PilihKehamilanActivity.KEHAMILAN_DIPILIH));
+			kehamilan = new JSONArray(intent.getExtras().getString(PilihKehamilanActivity.KEHAMILAN_DIPILIH));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -126,6 +128,9 @@ public class Homescreen extends Activity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
+		if(intent.getExtras().containsKey(SelectIbuActivity.NAMA_IBU)){
+			namaIbu = intent.getExtras().getString(SelectIbuActivity.NAMA_IBU);
 		}
 		mBtnSearch = (Button) findViewById(R.id.btnSearch);
 		mBtnConnect = (Button) findViewById(R.id.btnConnect);
@@ -209,9 +214,12 @@ public class Homescreen extends Activity {
 				if(mLstDevices!=null){
 				ArrayList<BluetoothDevice> devices = (ArrayList<BluetoothDevice>) ((MyAdapter) (mLstDevices.getAdapter())).getEntireList();
 				Intent intent = new Intent(getApplicationContext(), IbuActivity.class);
-				intent.putExtra(DEVICES_LISTS, devices);try{
-				intent.putExtra(PilihKehamilanActivity.KEHAMILAN_DIPILIH, kehamilan.toString());
+				intent.putExtra(DEVICES_LISTS, devices);
+				try{
+					intent.putExtra(PilihKehamilanActivity.KEHAMILAN_DIPILIH, kehamilan.toString());
+					intent.putExtra(SelectIbuActivity.NAMA_IBU, namaIbu);
 				}catch(NullPointerException ex){}
+				
 				intent.putExtra(DEVICE_UUID, mDeviceUUID.toString());
 				intent.putExtra(BUFFER_SIZE, mBufferSize);
 				startActivity(intent);

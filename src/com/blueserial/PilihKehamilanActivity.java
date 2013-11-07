@@ -31,10 +31,11 @@ public class PilihKehamilanActivity extends Activity {
 	ListView listKehamilan;
 	Button buttonPilihKehamilan;
 	String idIbu;
+	String namaIbu;
 	JSONArray jsonListKehamilan;
 	Activity activity;
 	JSONAdapter mja;
-	public static final String LIST_KEHAMILAN="http://gizi.inovasihusada.com/ws/bumil/hamil/";
+	public static final String LIST_KEHAMILAN="http://gia.karyateknologiinformasi.com/ws/bumil/hamil/";
 	public static final String KEHAMILAN_DIPILIH="KEHAMILAN_DIPILIH";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +46,7 @@ public class PilihKehamilanActivity extends Activity {
 		listKehamilan = (ListView)findViewById(R.id.listKehamilan);
 		buttonPilihKehamilan = (Button)findViewById(R.id.buttonPilihKehamilan);
 		idIbu = intent.getExtras().getString(SelectIbuActivity.ID_IBU);
+		namaIbu = intent.getExtras().getString(SelectIbuActivity.NAMA_IBU);
 		buttonPilihKehamilan.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -52,6 +54,7 @@ public class PilihKehamilanActivity extends Activity {
 				JSONArray kehamilan = mja.getItem(mja.getSelectedId());
 				Intent i = new Intent(getApplicationContext(),Homescreen.class);
 				i.putExtra(PilihKehamilanActivity.KEHAMILAN_DIPILIH, kehamilan.toString());
+				i.putExtra(SelectIbuActivity.NAMA_IBU, namaIbu);
 				startActivity(i);
 			}
 		});

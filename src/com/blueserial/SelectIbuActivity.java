@@ -33,8 +33,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class SelectIbuActivity extends Activity {
-	public static String LIST_IBU = "http://gizi.inovasihusada.com/andro/antro/ibu";
+	public static String LIST_IBU = "http://gia.karyateknologiinformasi.com/andro/antro/ibu";
 	public static String ID_IBU="com.bullshitdiarrha";
+	public static String NAMA_IBU="com.bullshitdiarrha.name";
+	public static String LOGIN_IBU = "http://gia.karyateknologiinformasi.com/ws/usr/login";
 	Activity activity;
 	boolean isLogedIn = false;
 	JSONAdapter mja;
@@ -59,6 +61,7 @@ public class SelectIbuActivity extends Activity {
 				Intent intent = new Intent(getApplicationContext(), PilihKehamilanActivity.class);
 				try {
 					intent.putExtra(SelectIbuActivity.ID_IBU, mja.getItem(mja.getSelectedId()).getString("id"));
+					intent.putExtra(SelectIbuActivity.NAMA_IBU, mja.getItem(mja.getSelectedId()).getString("nama"));
 					startActivity(intent);
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
@@ -98,7 +101,7 @@ public class SelectIbuActivity extends Activity {
 			login.put("username", "admin");
 			login.put("password", "admin");
 			JSONObject o = new JSONObject(login);
-			rr = (JSONObject)HttpClient.SendHttpPost("http://gizi.inovasihusada.com/ws/usr/login", o);
+			rr = (JSONObject)HttpClient.SendHttpPost(SelectIbuActivity.LOGIN_IBU, o);
 			
 			try {
 				Log.i("JSON", rr.toString());
