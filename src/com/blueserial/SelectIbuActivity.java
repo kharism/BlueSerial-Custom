@@ -150,12 +150,6 @@ public class SelectIbuActivity extends Activity {
 						
 					}
 				}
-				activity.runOnUiThread(new Runnable() {					
-					@Override
-					public void run() {
-						Toast.makeText(activity, sessid, Toast.LENGTH_LONG).show();					
-					}
-				});
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

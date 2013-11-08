@@ -31,6 +31,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ReceiverCallNotAllowedException;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
@@ -252,9 +253,29 @@ public class ActivityAnak extends Activity {
 			ReadInput u = (ReadInput)readThreads.get(i);
 			u.stop();
 			readThreads.remove(u);
-		}
+		}try{
 		this.unregisterReceiver(mReceiver);
+		}catch(IllegalArgumentException ex){
+			
+		}
 		super.onBackPressed();
+	}
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		try{
+		this.unregisterReceiver(mReceiver);
+		}catch(IllegalArgumentException ex){
+			
+		}
+		super.onPause();
+	}
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+        IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        this.registerReceiver(mReceiver, filter3);
+		super.onResume();
 	}
 	private class SendDataTask extends AsyncTask<Void, Void, Void>{
 		JSONObject response;

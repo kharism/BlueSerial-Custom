@@ -42,6 +42,7 @@ import android.widget.Toast;
 public class IbuActivity extends Activity {
 	public final static String FORM_KUNJUNGAN_TOKEN_URL = "http://gia.karyateknologiinformasi.com/ws/ui/form/form-bumil-kunjungan?aksi=p&format=json";
 	public final static String FORM_ACTION = "http://gia.karyateknologiinformasi.com/ws/bumil/kunjungan/";
+	private ProgressDialog pd;
 	private Button mBtnHbManual;
 	private Button buttonManualBerat;
 	private Button buttonManualTinggi;
@@ -399,6 +400,17 @@ public class IbuActivity extends Activity {
 	}
 	private class SendData extends AsyncTask<Void, Void, Void>{
 
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			if(pd==null){
+				pd = new ProgressDialog(activity);
+				
+			}
+			pd.setTitle("Sedang mengirim");
+			pd.show();
+			super.onPreExecute();
+		}
 		JSONObject l;
 		@Override
 		protected Void doInBackground(Void... params) {
@@ -420,6 +432,7 @@ public class IbuActivity extends Activity {
 		@Override
 		protected void onPostExecute(Void result) {
 			// TODO Auto-generated method stub
+			pd.dismiss();
 			activity.runOnUiThread(new Runnable() {
 				
 				@Override

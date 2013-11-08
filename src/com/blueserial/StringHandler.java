@@ -37,7 +37,7 @@ public class StringHandler {
 				h=l.Handle(lines[g]);
 				g++;
 			}
-			while(h.isEmpty());
+			while(h.isEmpty()&&g<lines.length);
 			return h;
 		}catch(Exception ex){
 			return "";
