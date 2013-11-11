@@ -114,9 +114,17 @@ public class Homescreen extends Activity {
 		ActivityHelper.initialize(this); //This is to ensure that the rotation persists across activities and not just this one
 		Log.d(TAG, "Created");
 		Intent intent = getIntent();
+		mBtnSearch = (Button) findViewById(R.id.btnSearch);
+		mBtnConnect = (Button) findViewById(R.id.btnConnect);
+		mButtonAnak = (Button) findViewById(R.id.buttonAnak);
+		mButtonIbu = (Button) findViewById(R.id.buttonIbu);
+		heading = (TextView) findViewById(R.id.txtListHeading);
+		mLstDevices = (ListView) findViewById(R.id.lstDevices);
+		
 		if(intent.getExtras().containsKey(PilihKehamilanActivity.KEHAMILAN_DIPILIH))
 		try {
 			kehamilan = new JSONArray(intent.getExtras().getString(PilihKehamilanActivity.KEHAMILAN_DIPILIH));
+			mButtonAnak.setVisibility(0);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -124,6 +132,7 @@ public class Homescreen extends Activity {
 		else if(intent.getExtras().containsKey(SelectAnakActivity.ID_ANAK)){
 			try {
 				anak = new JSONObject(intent.getExtras().getString(SelectAnakActivity.ID_ANAK));
+				mButtonIbu.setVisibility(0);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -132,12 +141,6 @@ public class Homescreen extends Activity {
 		if(intent.getExtras().containsKey(SelectIbuActivity.NAMA_IBU)){
 			namaIbu = intent.getExtras().getString(SelectIbuActivity.NAMA_IBU);
 		}
-		mBtnSearch = (Button) findViewById(R.id.btnSearch);
-		mBtnConnect = (Button) findViewById(R.id.btnConnect);
-		mButtonAnak = (Button) findViewById(R.id.buttonAnak);
-		mButtonIbu = (Button) findViewById(R.id.buttonIbu);
-		heading = (TextView) findViewById(R.id.txtListHeading);
-		mLstDevices = (ListView) findViewById(R.id.lstDevices);
 		/*
 		 *Check if there is a savedInstanceState. If yes, that means the onCreate was probably triggered by a configuration change
 		 *like screen rotate etc. If that's the case then populate all the views that are necessary here 

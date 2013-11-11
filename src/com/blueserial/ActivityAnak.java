@@ -499,6 +499,10 @@ public class ActivityAnak extends Activity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			catch(NullPointerException ex){
+				Log.e("RR", rr.toString());
+				ex.printStackTrace();
+			}
 			return null;
 		}
 		@Override
