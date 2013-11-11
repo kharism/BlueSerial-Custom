@@ -10,7 +10,7 @@
 
     <Button
         android:id="@+id/buttonSelectIbu"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
@@ -20,7 +20,7 @@
 
     <Button
         android:id="@+id/buttonSelectAnak"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/buttonSelectIbu"
         android:layout_below="@+id/buttonSelectIbu"

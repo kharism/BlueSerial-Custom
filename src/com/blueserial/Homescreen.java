@@ -115,7 +115,7 @@ public class Homescreen extends Activity {
 		Log.d(TAG, "Created");
 		Intent intent = getIntent();
 		mBtnSearch = (Button) findViewById(R.id.btnSearch);
-		mBtnConnect = (Button) findViewById(R.id.btnConnect);
+		//mBtnConnect = (Button) findViewById(R.id.btnConnect);
 		mButtonAnak = (Button) findViewById(R.id.buttonAnak);
 		mButtonIbu = (Button) findViewById(R.id.buttonIbu);
 		heading = (TextView) findViewById(R.id.txtListHeading);
@@ -229,10 +229,8 @@ public class Homescreen extends Activity {
 				}
 			}
 		});
-		mBtnConnect.setOnClickListener(new OnClickListener() {
-			/**
-			 * connect to all paired devices
-			 */
+		/*mBtnConnect.setOnClickListener(new OnClickListener() {
+			
 			@Override
 			public void onClick(View arg0) {
 				List<BluetoothDevice> devices = ((MyAdapter) (mLstDevices.getAdapter())).getEntireList();
@@ -247,7 +245,7 @@ public class Homescreen extends Activity {
 				}
 				
 			}
-		});
+		});*/
 	}
 
 	/**

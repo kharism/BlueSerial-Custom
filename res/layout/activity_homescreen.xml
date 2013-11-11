@@ -36,15 +36,6 @@
             android:layout_weight="2"
             android:text="Search for paired devices" />
 
-        <Button
-            android:id="@+id/btnConnect"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_weight="1"
-            android:enabled="false"
-            android:text="Connect All" />
-
 
 
     </LinearLayout>
