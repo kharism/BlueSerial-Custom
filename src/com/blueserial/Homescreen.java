@@ -124,7 +124,7 @@ public class Homescreen extends Activity {
 		if(intent.getExtras().containsKey(PilihKehamilanActivity.KEHAMILAN_DIPILIH))
 		try {
 			kehamilan = new JSONArray(intent.getExtras().getString(PilihKehamilanActivity.KEHAMILAN_DIPILIH));
-			mButtonAnak.setVisibility(0);
+			mButtonAnak.setVisibility(View.INVISIBLE);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -132,7 +132,7 @@ public class Homescreen extends Activity {
 		else if(intent.getExtras().containsKey(SelectAnakActivity.ID_ANAK)){
 			try {
 				anak = new JSONObject(intent.getExtras().getString(SelectAnakActivity.ID_ANAK));
-				mButtonIbu.setVisibility(0);
+				mButtonIbu.setVisibility(View.INVISIBLE);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
