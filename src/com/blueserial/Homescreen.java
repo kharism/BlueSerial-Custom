@@ -7,6 +7,7 @@
 package com.blueserial;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -332,9 +333,50 @@ public class Homescreen extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				adapter.setSelectedIndex(position);
-				mBtnConnect.setEnabled(true);
+				//mBtnConnect.setEnabled(true);
 			}
 		});
+	}
+	private class CalibrateCalipherTask extends AsyncTask<Void, Void, Void>{
+		BluetoothDevice bd;
+		public CalibrateCalipherTask(BluetoothDevice bd){
+			this.bd = bd;
+		}
+		@Override
+		protected Void doInBackground(Void... arg0) {
+			// TODO Auto-generated method stub
+			BluetoothSocket mBTSocket;
+			Method m;
+			try {
+				m = bd.getClass().getMethod("createRfcommSocket", new Class[] {int.class});
+				mBTSocket = (BluetoothSocket) m.invoke(bd, 1);
+				BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
+				mBTSocket.connect();
+				OutputStream os = mBTSocket.getOutputStream();
+				os.write(Byte.valueOf("SET AWAL\r\n"));
+				os.close();
+				mBTSocket.close();
+			} catch (NoSuchMethodException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			return null;
+		}
+		
 	}
 
 	/**
@@ -512,6 +554,10 @@ public class Homescreen extends Activity {
 		case R.id.action_settings:
 			Intent intent = new Intent(Homescreen.this, PreferencesActivity.class);
 			startActivityForResult(intent, SETTINGS);
+			break;
+		case R.id.action_calibrate_tinggi:
+			BluetoothDevice selected = ((MyAdapter)mLstDevices.getAdapter()).getSelectedItem();
+			
 			break;
 		}
 		return super.onOptionsItemSelected(item);
