@@ -184,7 +184,7 @@
     	    android:id="@+id/editTextTricep"
     	    android:layout_width="wrap_content"
     	    android:layout_height="wrap_content"
-    	    android:layout_weight="1.11"
+    	    android:layout_weight="0.86"
     	    android:ems="10"
     	    android:enabled="false"
     	    android:inputType="none" >
@@ -197,6 +197,13 @@
     	    android:layout_width="wrap_content"
     	    android:layout_height="wrap_content"
     	    android:text="Manual" />
+
+    	<Button
+    	    android:id="@+id/toggleCaliper"
+    	    style="?android:attr/buttonStyleSmall"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:text="Toggle caliper" />
 
     </LinearLayout>
     <LinearLayout
@@ -215,7 +222,7 @@
     	    android:id="@+id/editTextSubskapular"
     	    android:layout_width="wrap_content"
     	    android:layout_height="wrap_content"
-    	    android:layout_weight="1.41"
+    	    android:layout_weight="1.49"
     	    android:ems="10"
     	    android:enabled="false"
     	    android:inputType="none" >

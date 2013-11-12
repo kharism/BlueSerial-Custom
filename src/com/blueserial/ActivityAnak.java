@@ -49,6 +49,7 @@ public class ActivityAnak extends Activity {
 	public final static String LOGIN = "http://gia.karyateknologiinformasi.com/ws/usr/login/";
 	public final static String FORM_KUNJUNGAN_TOKEN_URL = "http://gia.karyateknologiinformasi.com/ws/ui/form/form-anak-kunjungan?aksi=p&format=json";
 	public final static String FORM_ACTION="http://gia.karyateknologiinformasi.com/ws/anak/kunjungan/";
+	Map<String,EditText> maps;
 	private Button buttonManualBerat;
 	private Button buttonManualTinggi;
 	private Button buttonManualLila;
@@ -57,6 +58,7 @@ public class ActivityAnak extends Activity {
 	private Button buttonManualSubskapular;
 	private Button buttonAnakSet;
 	private Button buttonSimpan;
+	private Button toggleCaliper;
 	
 	private EditText editTextBerat;
 	private EditText editTextTinggi;
@@ -92,6 +94,7 @@ public class ActivityAnak extends Activity {
 		buttonManualSubskapular = (Button) findViewById(R.id.buttonManualSubskapular);
 		buttonAnakSet = (Button) findViewById(R.id.buttonAnakSet);
 		buttonSimpan = (Button) findViewById(R.id.buttonSimpan);
+		toggleCaliper = (Button) findViewById(R.id.toggleCaliper);
 		
 		editTextBerat = (EditText) findViewById(R.id.editTextBerat);
 		editTextTinggi = (EditText) findViewById(R.id.editTextTinggi);
@@ -99,6 +102,11 @@ public class ActivityAnak extends Activity {
 		editTextLika = (EditText) findViewById(R.id.editTextLika);
 		editTextTricep = (EditText) findViewById(R.id.editTextTricep);
 		editTextSubskapular = (EditText) findViewById(R.id.editTextSubskapular);
+		maps = new HashMap<String, EditText>();
+		maps.put("T", editTextTinggi);
+		maps.put("S", editTextBerat);
+		maps.put("LE", editTextTricep);
+		maps.put("BB", editTextBerat);
 		
 		mDeviceUUID = UUID.fromString(b.getString(Homescreen.DEVICE_UUID));
 		devices = b.getParcelableArrayList(Homescreen.DEVICES_LISTS);
@@ -159,6 +167,17 @@ public class ActivityAnak extends Activity {
 				// TODO Auto-generated method stub
 				editTextTricep.setInputType(InputType.TYPE_CLASS_TEXT);
 				editTextTricep.setEnabled(true);
+			}
+		});
+		toggleCaliper.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				if(maps.get("LE")==editTextTricep)
+				maps.put("LE", editTextSubskapular);
+				else
+					maps.put("LE", editTextTricep);	
 			}
 		});
 		buttonManualSubskapular.setOnClickListener(new OnClickListener() {
@@ -398,16 +417,13 @@ public class ActivityAnak extends Activity {
 		private Thread t;
 		boolean threadStop=false;
 		BluetoothSocket mBTSocket;
-		Map<String,EditText> maps;
+		Map<String,EditText> pp;
 		StringHandler sh;
 		public ReadInput(BluetoothSocket sock) {
 			mBTSocket = sock;
+			pp=maps;
 			sh = new StringHandler();
-			maps = new HashMap<String, EditText>();
-			maps.put("T", editTextTinggi);
-			maps.put("S", editTextBerat);
-			maps.put("LE", editTextTricep);
-			maps.put("BB", editTextBerat);
+			
 			t = new Thread(this, "Input Thread");
 			t.start();
 		}
@@ -442,11 +458,11 @@ public class ActivityAnak extends Activity {
 						String[] lines=strInput.split("\r\n");
 						int g=0;
 						try{
-							if(lines[g].isEmpty()|| !maps.containsKey(String.valueOf(lines[g].charAt(0)))){
+							if(lines[g].isEmpty()|| !pp.containsKey(String.valueOf(lines[g].charAt(0)))){
 							g++;
 						}
-						String pp = new String(lines[g].split(" ")[0]);
-						final EditText curr = maps.get(pp);
+						String ll = new String(lines[g].split(" ")[0]);
+						final EditText curr = maps.get(ll);
 						curr.post(new Runnable() {
 							
 							@Override
