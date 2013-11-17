@@ -16,6 +16,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,7 +33,7 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class SelectAnakActivity extends Activity {
-	public static String LIST_ANAK = "http://gia.karyateknologiinformasi.com/andro/antro/balita";
+	public static String LIST_ANAK = "/andro/antro/balita";
 	public static final String ID_ANAK = "SELECTANAK.IDANAK";
 	public static final String NAMA_ANAK = "SELECTANAK.NAMAANAK";
 	Activity activity;
@@ -44,11 +45,26 @@ public class SelectAnakActivity extends Activity {
 	JSONArray listAnak;
 	String token;
 	Button selectButton;
+	SharedPreferences prefs;
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		if(pd!=null && pd.isShowing()){
+			pd.dismiss();
+		}
+		super.onBackPressed();
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.activity_select_anak);
 		activity = this;
+		prefs = this.getSharedPreferences(
+			      "com.blueserial", Context.MODE_PRIVATE);
+		String serverUrl = prefs.getString(PreferencesEditor.SERVER_URL, "");
+		
 		selectButton = (Button)findViewById(R.id.selectButton);
 		lv = (ListView)findViewById(R.id.listAnak);
 		selectButton.setOnClickListener(new OnClickListener() {
@@ -75,8 +91,12 @@ public class SelectAnakActivity extends Activity {
 		protected void onPreExecute() {
 			if(pd==null){
 				pd = new ProgressDialog(activity);
-				pd.setTitle("Coba Login");
 			}
+			//Toast.makeText(activity, prefs.getString(PreferencesEditor.SERVER_URL, "")+SelectIbuActivity.LOGIN_IBU, Toast.LENGTH_SHORT).show();
+			pd.setTitle("Coba Login");
+			pd.setCancelable(true);
+			
+			pd.setCanceledOnTouchOutside(false);
 			pd.show();
 			super.onPreExecute();
 		}
@@ -88,7 +108,7 @@ public class SelectAnakActivity extends Activity {
 			login.put("username", "admin");
 			login.put("password", "admin");
 			JSONObject o = new JSONObject(login);
-			rr = (JSONObject)HttpClient.SendHttpPost(SelectIbuActivity.LOGIN_IBU, o);
+			rr = (JSONObject)HttpClient.SendHttpPost(prefs.getString(PreferencesEditor.SERVER_URL, "")+SelectIbuActivity.LOGIN_IBU, o);
 			
 			try {
 				Log.i("JSON", rr.toString());
@@ -98,12 +118,13 @@ public class SelectAnakActivity extends Activity {
 				strMessage = message.getString("pesan");
 				if(message.getString("tipe").equals("success")||(message.getString("tipe").equals("error")&&message.getString("pesan").equalsIgnoreCase("Username sudah login"))){
 					isLogedIn = true;
-					JSONObject form = (JSONObject) HttpClient.SendHttpGet(ActivityAnak.FORM_KUNJUNGAN_TOKEN_URL);
+					JSONObject form = (JSONObject) HttpClient.SendHttpGet(prefs.getString(PreferencesEditor.SERVER_URL, "")+ActivityAnak.FORM_KUNJUNGAN_TOKEN_URL);
 					Log.i("JSON",form.toString());
 					sessid = form.getString("sessid");
 					token = form.getString("token");
 					Log.d("TOKEN", token);
-					listAnak = (JSONArray)HttpClient.SendHttpGet(SelectAnakActivity.LIST_ANAK);
+					listAnak = (JSONArray)HttpClient.SendHttpGet(prefs.getString(PreferencesEditor.SERVER_URL, "")+SelectAnakActivity.LIST_ANAK);
+					
 					if(listAnak!=null){
 					    activity.runOnUiThread(new Runnable() {
 							

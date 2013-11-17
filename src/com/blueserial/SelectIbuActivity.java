@@ -16,6 +16,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.v4.view.ViewPager.LayoutParams;
 import android.util.Log;
@@ -33,10 +34,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class SelectIbuActivity extends Activity {
-	public static String LIST_IBU = "http://gia.karyateknologiinformasi.com/andro/antro/ibu";
+	public static String LIST_IBU = "/andro/antro/ibu";
 	public static String ID_IBU="com.bullshitdiarrha";
 	public static String NAMA_IBU="com.bullshitdiarrha.name";
-	public static String LOGIN_IBU = "http://gia.karyateknologiinformasi.com/ws/usr/login";
+	public static String LOGIN_IBU = "/ws/usr/login";
 	Activity activity;
 	boolean isLogedIn = false;
 	JSONAdapter mja;
@@ -46,11 +47,16 @@ public class SelectIbuActivity extends Activity {
 	JSONArray listIbu;
 	String token;
 	Button selectButton;
+	SharedPreferences prefs;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		activity = this;
+		
 		setContentView(R.layout.activity_select_ibu);
+		prefs = this.getSharedPreferences("com.blueserial", Context.MODE_PRIVATE);
+		
+		//LIST_IBU = 
 		lv = (ListView)findViewById(R.id.listIbu);
 		selectButton = (Button)findViewById(R.id.selectButton);
 		selectButton.setOnClickListener(new OnClickListener() {
@@ -88,8 +94,12 @@ public class SelectIbuActivity extends Activity {
 		protected void onPreExecute() {
 			if(pd==null){
 				pd = new ProgressDialog(activity);
-				pd.setTitle("Coba Login");
 			}
+			pd.setTitle("Coba Login");
+			pd.setCancelable(true);
+			pd.setCanceledOnTouchOutside(false);
+			Log.i("ServerShit", prefs.getString(PreferencesEditor.SERVER_URL, "")+SelectIbuActivity.LOGIN_IBU);
+			Toast.makeText(activity, prefs.getString(PreferencesEditor.SERVER_URL, "")+SelectIbuActivity.LOGIN_IBU, Toast.LENGTH_SHORT).show();
 			pd.show();
 			super.onPreExecute();
 		}
@@ -101,7 +111,7 @@ public class SelectIbuActivity extends Activity {
 			login.put("username", "admin");
 			login.put("password", "admin");
 			JSONObject o = new JSONObject(login);
-			rr = (JSONObject)HttpClient.SendHttpPost(SelectIbuActivity.LOGIN_IBU, o);
+			rr = (JSONObject)HttpClient.SendHttpPost(prefs.getString(PreferencesEditor.SERVER_URL, "")+SelectIbuActivity.LOGIN_IBU, o);
 			
 			try {
 				Log.i("JSON", rr.toString());
@@ -111,12 +121,12 @@ public class SelectIbuActivity extends Activity {
 				strMessage = message.getString("pesan");
 				if(message.getString("tipe").equals("success")||(message.getString("tipe").equals("error")&&message.getString("pesan").equalsIgnoreCase("Username sudah login"))){
 					isLogedIn = true;
-					JSONObject form = (JSONObject) HttpClient.SendHttpGet(IbuActivity.FORM_KUNJUNGAN_TOKEN_URL);
+					JSONObject form = (JSONObject) HttpClient.SendHttpGet(prefs.getString(PreferencesEditor.SERVER_URL, "")+IbuActivity.FORM_KUNJUNGAN_TOKEN_URL);
 					Log.i("JSON",form.toString());
 					sessid = form.getString("sessid");
 					token = form.getString("token");
 					Log.d("TOKEN", token);
-					listIbu = (JSONArray)HttpClient.SendHttpGet(SelectIbuActivity.LIST_IBU);
+					listIbu = (JSONArray)HttpClient.SendHttpGet(prefs.getString(PreferencesEditor.SERVER_URL, "")+SelectIbuActivity.LIST_IBU);
 					if(listIbu!=null){
 					    activity.runOnUiThread(new Runnable() {
 							

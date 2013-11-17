@@ -15,6 +15,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,13 +35,15 @@ public class PilihKehamilanActivity extends Activity {
 	String namaIbu;
 	JSONArray jsonListKehamilan;
 	Activity activity;
+	SharedPreferences prefs;
 	JSONAdapter mja;
-	public static final String LIST_KEHAMILAN="http://gia.karyateknologiinformasi.com/ws/bumil/hamil/";
+	public static final String LIST_KEHAMILAN="/ws/bumil/hamil/";
 	public static final String KEHAMILAN_DIPILIH="KEHAMILAN_DIPILIH";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Intent intent = getIntent();
+		prefs = this.getSharedPreferences("com.blueserial", Context.MODE_PRIVATE);
 		setContentView(R.layout.activity_pilih_kehamilan);
 		activity = this;
 		listKehamilan = (ListView)findViewById(R.id.listKehamilan);
@@ -86,7 +89,7 @@ public class PilihKehamilanActivity extends Activity {
 		}
 		@Override
 		protected Void doInBackground(Void... params) {
-			rr = (JSONObject)HttpClient.SendHttpGet(PilihKehamilanActivity.LIST_KEHAMILAN+idIbu);
+			rr = (JSONObject)HttpClient.SendHttpGet(prefs.getString(PreferencesEditor.SERVER_URL, "")+PilihKehamilanActivity.LIST_KEHAMILAN+idIbu);
 			try {
 				jsonListKehamilan = (JSONArray) rr.getJSONArray("aaData");
 				activity.runOnUiThread(new Runnable() {

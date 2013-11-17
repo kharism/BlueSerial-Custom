@@ -27,6 +27,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
@@ -40,8 +41,8 @@ import android.widget.Toast;
 
 @SuppressLint({ "NewApi", "ShowToast" })
 public class IbuActivity extends Activity {
-	public final static String FORM_KUNJUNGAN_TOKEN_URL = "http://gia.karyateknologiinformasi.com/ws/ui/form/form-bumil-kunjungan?aksi=p&format=json";
-	public final static String FORM_ACTION = "http://gia.karyateknologiinformasi.com/ws/bumil/kunjungan/";
+	public final static String FORM_KUNJUNGAN_TOKEN_URL = "/ws/ui/form/form-bumil-kunjungan?aksi=p&format=json";
+	public final static String FORM_ACTION = "/ws/bumil/kunjungan/";
 	private ProgressDialog pd;
 	private Button mBtnHbManual;
 	private Button buttonManualBerat;
@@ -65,6 +66,7 @@ public class IbuActivity extends Activity {
 	private String token;
 	private boolean kakiBengkak;
 	private JSONArray kehamilan;
+	SharedPreferences prefs;
 	@Override
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
@@ -83,6 +85,7 @@ public class IbuActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_ibu);
 		readThreads = new ArrayList<Runnable>();
+		prefs = this.getSharedPreferences("com.blueserial", Context.MODE_PRIVATE);;
 		Intent intent = getIntent();
 		Bundle b = intent.getExtras();
 		labelIbu = (TextView)findViewById(R.id.textView2);
@@ -129,7 +132,8 @@ public class IbuActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				new SendData().execute();;
+				new GetToken().execute();
+				
 			}
 		});
 		buttonManualTinggi.setOnClickListener(new OnClickListener() {
@@ -161,7 +165,6 @@ public class IbuActivity extends Activity {
 				}
 			}
 		});
-		new GetToken().execute();
 		//new loginTask().execute();
         IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
         this.registerReceiver(mReceiver, filter3);
@@ -372,7 +375,7 @@ public class IbuActivity extends Activity {
 		protected Void doInBackground(Void... params) {
 			// TODO Auto-generated method stub
 			try {
-				JSONObject form = (JSONObject) HttpClient.SendHttpGet(IbuActivity.FORM_KUNJUNGAN_TOKEN_URL);
+				JSONObject form = (JSONObject) HttpClient.SendHttpGet(prefs.getString(PreferencesEditor.SERVER_URL, "")+IbuActivity.FORM_KUNJUNGAN_TOKEN_URL);
 				Log.i("JSON",form.toString());
 				sessid = form.getString("sessid");
 				token = form.getString("token");
@@ -394,7 +397,7 @@ public class IbuActivity extends Activity {
 		@Override
 		protected void onPostExecute(Void result) {
 			// TODO Auto-generated method stub
-			
+			new SendData().execute();
 			super.onPostExecute(result);
 		}
 	}
@@ -405,8 +408,8 @@ public class IbuActivity extends Activity {
 			// TODO Auto-generated method stub
 			if(pd==null){
 				pd = new ProgressDialog(activity);
-				
 			}
+			pd.setCanceledOnTouchOutside(false);
 			pd.setTitle("Sedang mengirim");
 			pd.show();
 			super.onPreExecute();
@@ -420,7 +423,7 @@ public class IbuActivity extends Activity {
 				o.put("token", token);
 				o.put("kaki_bengkak", kakiBengkak?"1":"2");
 				o.put("berat", editTextBerat.getText());
-				l = (JSONObject)HttpClient.SendHttpPost(IbuActivity.FORM_ACTION+kehamilan.getString(0), o);
+				l = (JSONObject)HttpClient.SendHttpPost(prefs.getString(PreferencesEditor.SERVER_URL, "")+IbuActivity.FORM_ACTION+kehamilan.getString(0), o);
 				
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block

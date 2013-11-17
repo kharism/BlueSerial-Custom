@@ -79,6 +79,10 @@
             android:name="com.blueserial.SelectAnakActivity"
             android:label="@string/title_activity_select_anak" >
         </activity>
+        <activity
+            android:name="com.blueserial.PreferencesEditor"
+            android:label="@string/title_activity_preferences_editor" >
+        </activity>
     </application>
 
 </manifest>

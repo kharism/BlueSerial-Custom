@@ -36,7 +36,6 @@ public class HttpClient {
 	private static ArrayList<Header> headers;
 	private static CookieStore cookieStore = new BasicCookieStore();
 	public static Object SendHttpPost(String URL, JSONObject jsonObjSend) {
-
 		try {
 			DefaultHttpClient httpclient = new DefaultHttpClient();
 			HttpPost httpPostRequest = new HttpPost(URL);

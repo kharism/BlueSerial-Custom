@@ -183,11 +183,6 @@ public class Homescreen extends Activity {
 					Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 					startActivityForResult(enableBT, BT_ENABLE_REQUEST);
 				} else {
-					//listDevices = new ArrayList<BluetoothDevice>();
-					/*for (BluetoothDevice device : pairedDevices) {
-						listDevices.add(device);
-					}*/
-			        
 					new SearchDevices().execute();
 				}
 			}
@@ -196,9 +191,10 @@ public class Homescreen extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				if(mLstDevices!=null){
-					ArrayList<BluetoothDevice> devices = (ArrayList<BluetoothDevice>) ((MyAdapter) (mLstDevices.getAdapter())).getEntireList();
+				ArrayList<BluetoothDevice> devices;
+				if(((MyAdapter) (mLstDevices.getAdapter())).selectedIndex>=0){
+					devices = new ArrayList<BluetoothDevice>();
+					devices.add(((MyAdapter) (mLstDevices.getAdapter())).getSelectedItem());
 					Intent intent = new Intent(getApplicationContext(), ActivityAnak.class);
 					intent.putExtra(DEVICES_LISTS, devices);
 					try{
@@ -207,7 +203,19 @@ public class Homescreen extends Activity {
 					intent.putExtra(DEVICE_UUID, mDeviceUUID.toString());
 					intent.putExtra(BUFFER_SIZE, mBufferSize);
 					startActivity(intent);
-					}
+				}
+				else if(mLstDevices!=null){
+					devices = (ArrayList<BluetoothDevice>) ((MyAdapter) (mLstDevices.getAdapter())).getEntireList();					
+					Intent intent = new Intent(getApplicationContext(), ActivityAnak.class);
+					intent.putExtra(DEVICES_LISTS, devices);
+					try{
+					intent.putExtra(SelectAnakActivity.ID_ANAK, anak.toString());
+					}catch(NullPointerException ex){}
+					intent.putExtra(DEVICE_UUID, mDeviceUUID.toString());
+					intent.putExtra(BUFFER_SIZE, mBufferSize);
+					startActivity(intent);
+				}
+				
 			}
 		});
 		mButtonIbu.setOnClickListener(new OnClickListener() {
@@ -342,6 +350,7 @@ public class Homescreen extends Activity {
 		public CalibrateCalipherTask(BluetoothDevice bd){
 			this.bd = bd;
 		}
+		String mes = "sukses";
 		@Override
 		protected Void doInBackground(Void... arg0) {
 			// TODO Auto-generated method stub
@@ -353,28 +362,39 @@ public class Homescreen extends Activity {
 				BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
 				mBTSocket.connect();
 				OutputStream os = mBTSocket.getOutputStream();
-				os.write(Byte.valueOf("SET AWAL\r\n"));
+				byte[] buff ="SET AWAL\r\n".getBytes("ASCII"); 
+				os.write(buff);				
 				os.close();
 				mBTSocket.close();
 			} catch (NoSuchMethodException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				mes = e.getMessage();
 			} catch (IllegalArgumentException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				mes = e.getMessage();
 			} catch (IllegalAccessException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				mes = e.getMessage();
 			} catch (InvocationTargetException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				mes = e.getMessage();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				mes = e.getMessage();
 			}
 			
 			
 			return null;
+		}
+		@Override
+		protected void onPostExecute(Void result) {
+			msg(mes);
+			super.onPostExecute(result);
 		}
 		
 	}
@@ -508,6 +528,12 @@ public class Homescreen extends Activity {
 			myList = list;
 			notifyDataSetChanged();
 		}
+		@Override
+		public void remove(BluetoothDevice object) {
+			// TODO Auto-generated method stub
+			myList.remove(object);
+			super.remove(object);
+		}
 
 		public List<BluetoothDevice> getEntireList() {
 			return myList;
@@ -557,7 +583,14 @@ public class Homescreen extends Activity {
 			break;
 		case R.id.action_calibrate_tinggi:
 			BluetoothDevice selected = ((MyAdapter)mLstDevices.getAdapter()).getSelectedItem();
-			
+			CalibrateCalipherTask t = new CalibrateCalipherTask(selected);
+			t.execute();
+			break;
+		case R.id.action_remove_item:
+			BluetoothDevice selected2 = ((MyAdapter)mLstDevices.getAdapter()).getSelectedItem();
+			MyAdapter adapter = (MyAdapter) mLstDevices.getAdapter();
+			adapter.remove(selected2);
+			adapter.notifyDataSetChanged();
 			break;
 		}
 		return super.onOptionsItemSelected(item);
