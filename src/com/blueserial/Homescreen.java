@@ -63,10 +63,12 @@ public class Homescreen extends Activity {
 	private String namaIbu;
     private ArrayAdapter<String> mPairedDevicesArrayAdapter;
     private ArrayAdapter<String> mNewDevicesArrayAdapter;
+    private ArrayList<Short> RSID;
     private JSONArray kehamilan;
 	
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
+        ArrayList<BluetoothDevice> devList = new ArrayList<BluetoothDevice>();
+    	@Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
 
@@ -75,17 +77,19 @@ public class Homescreen extends Activity {
                 // Get the BluetoothDevice object from the Intent
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 // If it's already paired, skip it, because it's been listed already
-                if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
-                    mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-                }
-            // When discovery is finished, change the Activity title
+                //mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress()+String.valueOf(intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE)));
+                devList.add(device);
+                RSID.add(intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE));
+                // When discovery is finished, change the Activity title
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 setProgressBarIndeterminateVisibility(false);
                 setTitle("Search Device");
-                if (mNewDevicesArrayAdapter.getCount() == 0) {
-                    String noDevices = "No devices found";
-                    mNewDevicesArrayAdapter.add(noDevices);
-                }
+                heading.setText("Finished");
+    			mBtnSearch.setEnabled(true);
+                
+                MyAdapter adapter = (MyAdapter) mLstDevices.getAdapter();
+				adapter.replaceItems(devList);
+				devList=new ArrayList<BluetoothDevice>();
             }
         }
     };
@@ -110,7 +114,7 @@ public class Homescreen extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+		RSID = new ArrayList<Short>();
 		setContentView(R.layout.activity_homescreen);
 		ActivityHelper.initialize(this); //This is to ensure that the rotation persists across activities and not just this one
 		Log.d(TAG, "Created");
@@ -179,12 +183,14 @@ public class Homescreen extends Activity {
 				mBtnSearch.setEnabled(false);
 				if (mBTAdapter == null) {
 					Toast.makeText(getApplicationContext(), "Bluetooth not found", Toast.LENGTH_SHORT).show();
-				} else if (!mBTAdapter.isEnabled()) {
+				}else if (!mBTAdapter.isEnabled()) {
 					Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 					startActivityForResult(enableBT, BT_ENABLE_REQUEST);
 				} else {
-					new SearchDevices().execute();
+					//new SearchDevices().execute();
+					mBTAdapter.startDiscovery();
 				}
+				
 			}
 		});
 		mButtonAnak.setOnClickListener(new OnClickListener() {
@@ -222,9 +228,22 @@ public class Homescreen extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				if(mLstDevices!=null){
-				ArrayList<BluetoothDevice> devices = (ArrayList<BluetoothDevice>) ((MyAdapter) (mLstDevices.getAdapter())).getEntireList();
+				ArrayList<BluetoothDevice> devices;
+				if(((MyAdapter) (mLstDevices.getAdapter())).selectedIndex>=0){
+					devices = new ArrayList<BluetoothDevice>();
+					devices.add(((MyAdapter) (mLstDevices.getAdapter())).getSelectedItem());
+					Intent intent = new Intent(getApplicationContext(), IbuActivity.class);
+					intent.putExtra(DEVICES_LISTS, devices);
+					try{
+						intent.putExtra(PilihKehamilanActivity.KEHAMILAN_DIPILIH, kehamilan.toString());
+						intent.putExtra(SelectIbuActivity.NAMA_IBU, namaIbu);
+					}catch(NullPointerException ex){}
+					intent.putExtra(DEVICE_UUID, mDeviceUUID.toString());
+					intent.putExtra(BUFFER_SIZE, mBufferSize);
+					startActivity(intent);
+				}
+				else if(mLstDevices!=null){
+				devices = (ArrayList<BluetoothDevice>) ((MyAdapter) (mLstDevices.getAdapter())).getEntireList();
 				Intent intent = new Intent(getApplicationContext(), IbuActivity.class);
 				intent.putExtra(DEVICES_LISTS, devices);
 				try{
@@ -255,6 +274,8 @@ public class Homescreen extends Activity {
 				
 			}
 		});*/
+		registerReceiver(mReceiver, new IntentFilter(BluetoothDevice.ACTION_FOUND));
+		registerReceiver(mReceiver, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED));
 	}
 
 	/**
@@ -284,7 +305,7 @@ public class Homescreen extends Activity {
 		// TODO Auto-generated method stub
 		super.onStop();
 	}
-
+	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
@@ -415,8 +436,8 @@ public class Homescreen extends Activity {
 			for (BluetoothDevice device : pairedDevices) {
 				BluetoothSocket mBTSocket;
 				try {
-					Method m = device.getClass().getMethod("createRfcommSocket", new Class[] {int.class});
 					
+					Method m = device.getClass().getMethod("createRfcommSocket", new Class[] {int.class});					
 					mBTSocket = (BluetoothSocket) m.invoke(device, 1);
 					BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
 					mBTSocket.connect();
@@ -442,6 +463,8 @@ public class Homescreen extends Activity {
 				}
 				
 			}
+			
+		
 			/*mBTAdapter.startDiscovery();
 			BroadcastReceiver mReceiver = new BroadcastReceiver() {
 				public void onReceive(Context context, Intent intent) {
@@ -560,7 +583,7 @@ public class Homescreen extends Activity {
 				holder.tv.setBackgroundColor(Color.WHITE);
 			}
 			BluetoothDevice device = myList.get(position);
-			holder.tv.setText(device.getName() + "\n   " + device.getAddress());
+			holder.tv.setText(device.getName() + "\n   " +String.valueOf(RSID.get(position)));
 
 			return vi;
 		}

@@ -93,6 +93,7 @@ public class HttpClient {
 
 				// convert content stream to a String
 				String resultString= convertStreamToString(instream);
+				Log.i("RESPONSE",resultString);
 				instream.close();
 				if(resultString.charAt(0)=='{')
 				{

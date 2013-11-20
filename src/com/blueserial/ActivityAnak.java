@@ -133,7 +133,7 @@ public class ActivityAnak extends Activity {
 		maps.put("BB", editTextBerat);
 		
 		mDeviceUUID = UUID.fromString(b.getString(Homescreen.DEVICE_UUID));
-		devices = b.getParcelableArrayList(Homescreen.DEVICES_LISTS);
+		devices = b.getParcelableArrayList(Homescreen.DEVICES_LISTS);		
 		try {
 			anak = new JSONObject(b.getString(SelectAnakActivity.ID_ANAK));
 		} catch (JSONException e) {
@@ -365,7 +365,7 @@ public class ActivityAnak extends Activity {
 			pd = new ProgressDialog(activity);
 			pd.setCanceledOnTouchOutside(false);
 			pd.setTitle("Coba mengirim data");
-			Toast.makeText(activity, prefs.getString(PreferencesEditor.SERVER_URL, "")+ActivityAnak.FORM_ACTION, Toast.LENGTH_SHORT).show();
+			//Toast.makeText(activity, prefs.getString(PreferencesEditor.SERVER_URL, "")+ActivityAnak.FORM_ACTION, Toast.LENGTH_SHORT).show();
 			pd.show();
 			super.onPreExecute();
 		}
@@ -376,7 +376,7 @@ public class ActivityAnak extends Activity {
 			try {
 				o.put("token", editToken);
 				Date date = new Date();
-				o.put("tanggal", date.getDate()+"/"+date.getMonth()+"/"+date.getYear());
+				o.put("tanggal", date.getMonth()+"/"+date.getDate()+"/"+date.getYear());
 				o.put("bb", editTextBerat.getText());
 				o.put("tb", editTextTinggi.getText());
 				o.put("pengukuran", berdiri?"BERDIRI":"TERLENTANG");
@@ -528,7 +528,6 @@ public class ActivityAnak extends Activity {
 				inputStream = mBTSocket.getInputStream();
 				while (!bStop && !threadStop) {
 					byte[] buffer = new byte[256];
-					if (inputStream.available() > 0) {
 						inputStream.read(buffer);
 						int i = 0;
 						/*
@@ -564,7 +563,7 @@ public class ActivityAnak extends Activity {
 							ex.printStackTrace();
 						}
 
-					}
+					
 					
 					Thread.sleep(250);
 				}

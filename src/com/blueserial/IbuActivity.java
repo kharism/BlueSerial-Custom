@@ -167,6 +167,7 @@ public class IbuActivity extends Activity {
 		});
 		//new loginTask().execute();
         IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        
         this.registerReceiver(mReceiver, filter3);
 		for(int i=0;i<devices.size();i++){
 			new ConnectBT(devices.get(i)).execute();
@@ -193,6 +194,7 @@ public class IbuActivity extends Activity {
 		public void onReceive(Context arg0, Intent arg1) {
 			// TODO Auto-generated method stub
 	        String action = arg1.getAction();
+	        
 			final BluetoothDevice device = arg1.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 	        if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)){
 	        	AlertDialog.Builder builder = new AlertDialog.Builder(activity);
