@@ -65,9 +65,10 @@ public class Homescreen extends Activity {
     private ArrayAdapter<String> mNewDevicesArrayAdapter;
     private ArrayList<Short> RSID;
     private JSONArray kehamilan;
-	
+    private ArrayList<BluetoothDevice> devList;
+    
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        ArrayList<BluetoothDevice> devList = new ArrayList<BluetoothDevice>();
+        
     	@Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -119,6 +120,7 @@ public class Homescreen extends Activity {
 		ActivityHelper.initialize(this); //This is to ensure that the rotation persists across activities and not just this one
 		Log.d(TAG, "Created");
 		Intent intent = getIntent();
+		devList = new ArrayList<BluetoothDevice>();
 		mBtnSearch = (Button) findViewById(R.id.btnSearch);
 		//mBtnConnect = (Button) findViewById(R.id.btnConnect);
 		mButtonAnak = (Button) findViewById(R.id.buttonAnak);
@@ -158,7 +160,7 @@ public class Homescreen extends Activity {
 				int selectedIndex = savedInstanceState.getInt(DEVICE_LIST_SELECTED);
 				if(selectedIndex != -1){
 					adapter.setSelectedIndex(selectedIndex);
-					mBtnConnect.setEnabled(true);
+					//mBtnConnect.setEnabled(true);
 				}
 			} else {
 				initList(new ArrayList<BluetoothDevice>());
@@ -179,6 +181,8 @@ public class Homescreen extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				mBTAdapter = BluetoothAdapter.getDefaultAdapter();
+				devList = new ArrayList<BluetoothDevice>();
+				RSID = new ArrayList<Short>();
 				heading.setText("Searching");
 				mBtnSearch.setEnabled(false);
 				if (mBTAdapter == null) {
@@ -583,8 +587,12 @@ public class Homescreen extends Activity {
 				holder.tv.setBackgroundColor(Color.WHITE);
 			}
 			BluetoothDevice device = myList.get(position);
-			holder.tv.setText(device.getName() + "\n   " +String.valueOf(RSID.get(position)));
-
+			try{
+			String h = String.valueOf(RSID.get(position));
+			holder.tv.setText(device.getName() + "\n   " +h);
+			}catch(ArrayIndexOutOfBoundsException ex){
+				ex.printStackTrace();
+			}
 			return vi;
 		}
 
