@@ -73,11 +73,12 @@
     	    android:layout_width="wrap_content"
     	    android:layout_height="wrap_content"
     	    android:text="Manual" />
+
     	<Button
     	    android:id="@+id/buttonStopBerat"
     	    android:layout_width="wrap_content"
     	    android:layout_height="wrap_content"
-    	    android:text="Stop" />
+    	    android:text="Ok" />
 
     </LinearLayout>
 	<LinearLayout
@@ -107,11 +108,13 @@
     	    android:layout_width="wrap_content"
     	    android:layout_height="wrap_content"
     	    android:text="Manual" />
+
 		<Button
-    	    android:id="@+id/buttonStopTinggi"
-    	    android:layout_width="wrap_content"
-    	    android:layout_height="wrap_content"
-    	    android:text="Stop" />
+		    android:id="@+id/buttonStopTinggi"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:text="Ok" />
+
     </LinearLayout>	
     <LinearLayout
     	android:layout_width="match_parent"

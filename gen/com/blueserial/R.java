@@ -30,9 +30,9 @@ public final class R {
         public static final int logo=0x7f020002;
     }
     public static final class id {
-        public static final int action_calibrate_tinggi=0x7f0a0042;
-        public static final int action_remove_item=0x7f0a0043;
-        public static final int action_settings=0x7f0a0041;
+        public static final int action_calibrate_tinggi=0x7f0a004f;
+        public static final int action_remove_item=0x7f0a0050;
+        public static final int action_settings=0x7f0a004e;
         public static final int btnClear=0x7f0a0033;
         public static final int btnClearInput=0x7f0a002b;
         public static final int btnDisconnect=0x7f0a002a;
@@ -52,15 +52,18 @@ public final class R {
         public static final int buttonManualTricep=0x7f0a0014;
         public static final int buttonMenu=0x7f0a0002;
         public static final int buttonPilihKehamilan=0x7f0a0037;
-        public static final int buttonSave=0x7f0a003a;
-        public static final int buttonSelectAnak=0x7f0a003f;
-        public static final int buttonSelectIbu=0x7f0a003e;
+        public static final int buttonSave=0x7f0a0047;
+        public static final int buttonSelectAnak=0x7f0a004c;
+        public static final int buttonSelectIbu=0x7f0a004b;
         public static final int buttonSimpan=0x7f0a0003;
         public static final int buttonStopBerat=0x7f0a0007;
         public static final int buttonStopTinggi=0x7f0a000b;
         public static final int chkReceiveText=0x7f0a002d;
         public static final int chkScroll=0x7f0a002c;
+        public static final int editCaliper=0x7f0a003a;
         public static final int editHb=0x7f0a0024;
+        public static final int editLika=0x7f0a0042;
+        public static final int editLila=0x7f0a0040;
         public static final int editSend=0x7f0a0032;
         public static final int editTextBerat=0x7f0a0005;
         public static final int editTextLika=0x7f0a0010;
@@ -68,12 +71,16 @@ public final class R {
         public static final int editTextSubskapular=0x7f0a0017;
         public static final int editTextTinggi=0x7f0a0009;
         public static final int editTextTricep=0x7f0a0013;
+        public static final int editTimbanganAnak=0x7f0a0044;
+        public static final int editTimbanganDewasa=0x7f0a0046;
+        public static final int editTinggiBerdiri=0x7f0a003e;
+        public static final int editTinggiTerlentang=0x7f0a003c;
         public static final int editUrl=0x7f0a0039;
-        public static final int listAnak=0x7f0a003b;
-        public static final int listIbu=0x7f0a003d;
+        public static final int listAnak=0x7f0a0048;
+        public static final int listIbu=0x7f0a004a;
         public static final int listKehamilan=0x7f0a0036;
         public static final int listView1=0x7f0a0038;
-        public static final int lstContent=0x7f0a0040;
+        public static final int lstContent=0x7f0a004d;
         public static final int lstDevices=0x7f0a001f;
         public static final int radioBerdiri=0x7f0a0019;
         public static final int radioNo=0x7f0a0028;
@@ -82,7 +89,7 @@ public final class R {
         public static final int radioYa=0x7f0a001b;
         public static final int radioYes=0x7f0a0027;
         public static final int satuan=0x7f0a0031;
-        public static final int selectButton=0x7f0a003c;
+        public static final int selectButton=0x7f0a0049;
         public static final int textBerat=0x7f0a0004;
         public static final int textEdema=0x7f0a0026;
         public static final int textHb=0x7f0a0023;
@@ -93,6 +100,12 @@ public final class R {
         public static final int textTricep=0x7f0a0012;
         public static final int textView1=0x7f0a0035;
         public static final int textView2=0x7f0a0000;
+        public static final int textView3=0x7f0a003b;
+        public static final int textView4=0x7f0a003d;
+        public static final int textView5=0x7f0a003f;
+        public static final int textView6=0x7f0a0041;
+        public static final int textView7=0x7f0a0043;
+        public static final int textView8=0x7f0a0045;
         public static final int toggleCaliper=0x7f0a0015;
         public static final int txtListHeading=0x7f0a001e;
         public static final int txtReceive=0x7f0a002f;

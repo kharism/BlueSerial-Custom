@@ -79,8 +79,10 @@ public class Homescreen extends Activity {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 // If it's already paired, skip it, because it's been listed already
                 //mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress()+String.valueOf(intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE)));
-                devList.add(device);
-                RSID.add(intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE));
+                if(!devList.contains(device)){
+	                devList.add(device);
+	                RSID.add(intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE));
+	            }
                 // When discovery is finished, change the Activity title
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 setProgressBarIndeterminateVisibility(false);
