@@ -467,7 +467,7 @@ public class ActivityAnak extends Activity {
 					String strInput = new String(buff, 0, i);
 					String[] p = strInput.split("\r\n");*/
 					os.write("SET AWAL\r\n".getBytes("ASCII"));
-					Thread.sleep(500);
+					Thread.sleep(2500);
 					os.write("GET NILAI\r\n".getBytes("ASCII"));
 				}
 			} catch (IOException e) {
@@ -561,11 +561,13 @@ public class ActivityAnak extends Activity {
 						//TODO:Olah bacaan
 						String[] lines=strInput.split("\r\n");
 						int g=0;
-						try{
-							if(lines[g].isEmpty()|| !pp.containsKey(String.valueOf(lines[g].charAt(0)))){
-							g++;
-						}
-						String ll = new String(lines[g].split(" ")[0]);
+						try{							
+							if(lines[g].isEmpty()|| !maps.containsKey(String.valueOf(lines[g].charAt(0))))
+							{
+								g++;
+							}
+							
+						String ll = new String(lines[g].split("\\s")[0]);
 						final EditText curr = maps.get(ll);
 						curr.post(new Runnable() {
 							
@@ -583,7 +585,7 @@ public class ActivityAnak extends Activity {
 
 					
 					
-					Thread.sleep(250);
+					Thread.sleep(500);
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

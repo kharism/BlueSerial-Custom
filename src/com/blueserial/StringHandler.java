@@ -1,6 +1,8 @@
 package com.blueserial;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,20 +28,22 @@ public class StringHandler {
 	public String Handle(String input){
 		String[] lines=input.split("\r\n");
 		int g=0;
-		if(lines[g].isEmpty() || !this.mHandlers.containsKey(lines[g].split(" ")[0])){
+		if(lines[g].isEmpty() || !this.mHandlers.containsKey(lines[g].split("\\s")[0])){
 			g++;
 		}
 		String h = "";
 		try{
 			do{
-				String i = new String(lines[g].split(" ")[0]);
+				String i = new String(lines[g].split("\\s")[0]);
 				AbstractHandler l = (AbstractHandler)mHandlers.get(i);
 				h=l.Handle(lines[g]);
+				Log.i("DATA BACAAN",h);
 				g++;
 			}
-			while(h.isEmpty()&&g<lines.length);
+			while(!h.equalsIgnoreCase("") && Double.valueOf(h)==0 && g<lines.length);
 			return h;
 		}catch(Exception ex){
+			ex.printStackTrace();
 			return "";
 		}
 	}
