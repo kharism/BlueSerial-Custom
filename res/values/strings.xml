@@ -24,5 +24,6 @@
     <string name="title_activity_select_mode">SelectModeActivity</string>
     <string name="title_activity_select_anak">SelectAnakActivity</string>
     <string name="title_activity_preferences_editor">PreferencesEditor</string>
+    <string name="title_activity_login">LoginActivity</string>
 
 </resources>

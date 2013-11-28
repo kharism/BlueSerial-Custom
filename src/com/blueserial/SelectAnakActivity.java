@@ -37,7 +37,7 @@ public class SelectAnakActivity extends Activity {
 	public static final String ID_ANAK = "SELECTANAK.IDANAK";
 	public static final String NAMA_ANAK = "SELECTANAK.NAMAANAK";
 	Activity activity;
-	boolean isLogedIn = false;
+	boolean isLogedIn = true;
 	JSONAdapter mja;
 	ListView lv;
 	ProgressDialog pd;
@@ -79,7 +79,8 @@ public class SelectAnakActivity extends Activity {
 			}
 		});
 			try{
-			new loginTask().execute();}
+			new loginTask().execute();
+			}
 			catch(NullPointerException ex){
 				ex.printStackTrace();
 			}
@@ -108,15 +109,8 @@ public class SelectAnakActivity extends Activity {
 			login.put("username", "admin");
 			login.put("password", "admin");
 			JSONObject o = new JSONObject(login);
-			rr = (JSONObject)HttpClient.SendHttpPost(prefs.getString(PreferencesEditor.SERVER_URL, "")+SelectIbuActivity.LOGIN_IBU, o);
 			
 			try {
-				Log.i("JSON", rr.toString());
-				JSONObject message;
-				message = ((JSONObject)rr.get("message"));
-				//activity.setTitle(message.getString("pesan"));
-				strMessage = message.getString("pesan");
-				if(message.getString("tipe").equals("success")||(message.getString("tipe").equals("error")&&message.getString("pesan").equalsIgnoreCase("Username sudah login"))){
 					isLogedIn = true;
 					JSONObject form = (JSONObject) HttpClient.SendHttpGet(prefs.getString(PreferencesEditor.SERVER_URL, "")+ActivityAnak.FORM_KUNJUNGAN_TOKEN_URL);
 					Log.i("JSON",form.toString());
@@ -125,7 +119,8 @@ public class SelectAnakActivity extends Activity {
 					Log.d("TOKEN", token);
 					listAnak = (JSONArray)HttpClient.SendHttpGet(prefs.getString(PreferencesEditor.SERVER_URL, "")+SelectAnakActivity.LIST_ANAK);
 					
-					if(listAnak!=null){
+					if(listAnak!=null)
+					{
 					    activity.runOnUiThread(new Runnable() {
 							
 							@Override
@@ -154,9 +149,7 @@ public class SelectAnakActivity extends Activity {
 							    	
 								});
 							}
-						});
-						
-					}
+						});					
 				}
 				activity.runOnUiThread(new Runnable() {					
 					@Override

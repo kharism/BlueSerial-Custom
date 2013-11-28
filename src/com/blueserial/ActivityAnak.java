@@ -2,6 +2,7 @@ package com.blueserial;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -455,6 +456,19 @@ public class ActivityAnak extends Activity {
 					mBTSocket = (BluetoothSocket) m.invoke(mDevice, 1);
 					BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
 					mBTSocket.connect();
+					OutputStream os = mBTSocket.getOutputStream();
+					InputStream is = mBTSocket.getInputStream();
+					/*os.write("IDENTIFIKASI\r".getBytes("ASCII"));
+					byte[] buff = new byte[256];
+					is.read(buff);
+					int i=0;
+					for (i = 0; i < buff.length && buff[i] != 0; i++) {
+					}
+					String strInput = new String(buff, 0, i);
+					String[] p = strInput.split("\r\n");*/
+					os.write("SET AWAL\r\n".getBytes("ASCII"));
+					Thread.sleep(500);
+					os.write("GET NILAI\r\n".getBytes("ASCII"));
 				}
 			} catch (IOException e) {
 				// Unable to connect to device
@@ -474,6 +488,10 @@ public class ActivityAnak extends Activity {
 				e.printStackTrace();
 				mes = e.getMessage();
 			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				mes = e.getMessage();
+			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				mes = e.getMessage();

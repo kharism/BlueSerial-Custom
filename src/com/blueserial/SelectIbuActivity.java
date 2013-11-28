@@ -39,7 +39,7 @@ public class SelectIbuActivity extends Activity {
 	public static String NAMA_IBU="com.bullshitdiarrha.name";
 	public static String LOGIN_IBU = "/ws/usr/login";
 	Activity activity;
-	boolean isLogedIn = false;
+	boolean isLogedIn = true;
 	JSONAdapter mja;
 	ListView lv;
 	ProgressDialog pd;
@@ -111,15 +111,11 @@ public class SelectIbuActivity extends Activity {
 			login.put("username", "admin");
 			login.put("password", "admin");
 			JSONObject o = new JSONObject(login);
-			rr = (JSONObject)HttpClient.SendHttpPost(prefs.getString(PreferencesEditor.SERVER_URL, "")+SelectIbuActivity.LOGIN_IBU, o);
 			
 			try {
-				Log.i("JSON", rr.toString());
 				JSONObject message;
-				message = ((JSONObject)rr.get("message"));
 				//activity.setTitle(message.getString("pesan"));
-				strMessage = message.getString("pesan");
-				if(message.getString("tipe").equals("success")||(message.getString("tipe").equals("error")&&message.getString("pesan").equalsIgnoreCase("Username sudah login"))){
+				{
 					isLogedIn = true;
 					JSONObject form = (JSONObject) HttpClient.SendHttpGet(prefs.getString(PreferencesEditor.SERVER_URL, "")+IbuActivity.FORM_KUNJUNGAN_TOKEN_URL);
 					Log.i("JSON",form.toString());
