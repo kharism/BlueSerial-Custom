@@ -65,8 +65,10 @@ public class Homescreen extends Activity {
     private ArrayAdapter<String> mNewDevicesArrayAdapter;
     private ArrayList<Short> RSID;
     private JSONArray kehamilan;
+    SharedPreferences prefs;
     private ArrayList<BluetoothDevice> devList;
-    
+    static ArrayList<BluetoothDevice> staticDevList;
+    private ArrayList<Short> staticRSID;
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         
     	@Override
@@ -92,7 +94,7 @@ public class Homescreen extends Activity {
                 
                 MyAdapter adapter = (MyAdapter) mLstDevices.getAdapter();
 				adapter.replaceItems(devList);
-				devList=new ArrayList<BluetoothDevice>();
+				//devList=new ArrayList<BluetoothDevice>();
             }
         }
     };
@@ -118,6 +120,8 @@ public class Homescreen extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		RSID = new ArrayList<Short>();
+		prefs = this.getSharedPreferences(
+			      "com.blueserial", Context.MODE_PRIVATE);
 		setContentView(R.layout.activity_homescreen);
 		ActivityHelper.initialize(this); //This is to ensure that the rotation persists across activities and not just this one
 		Log.d(TAG, "Created");
@@ -230,6 +234,7 @@ public class Homescreen extends Activity {
 				
 			}
 		});
+		
 		mButtonIbu.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -283,7 +288,7 @@ public class Homescreen extends Activity {
 		registerReceiver(mReceiver, new IntentFilter(BluetoothDevice.ACTION_FOUND));
 		registerReceiver(mReceiver, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED));
 	}
-
+	
 	/**
 	 * Called when the screen rotates. If this isn't handled, data already generated is no longer available
 	 */
@@ -302,13 +307,24 @@ public class Homescreen extends Activity {
 
 	@Override
 	protected void onPause() {
-		// TODO Auto-generated method stub
+		Toast.makeText(getApplicationContext(), "pause", Toast.LENGTH_SHORT).show();
+		((MyApplication)getApplication()).setStaticDevList(devList);
+		((MyApplication)getApplication()).setStaticRSID(RSID);
 		super.onPause();
+	}
+	@Override
+	protected void onResume() {
+		Toast.makeText(getApplicationContext(), "resume", Toast.LENGTH_SHORT).show();
+		if(((MyApplication)getApplication()).getStaticDevList()!=null){
+			devList = ((MyApplication)getApplication()).getStaticDevList();
+			RSID = ((MyApplication)getApplication()).getStaticRSID();
+			((MyAdapter)mLstDevices.getAdapter()).replaceItems(((MyApplication)getApplication()).getStaticDevList());			
+		}
+		super.onResume();
 	}
 
 	@Override
 	protected void onStop() {
-		// TODO Auto-generated method stub
 		super.onStop();
 	}
 	
