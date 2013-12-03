@@ -1,4 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -6,24 +6,29 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
     tools:context=".SelectModeActivity" >
 
     <Button
         android:id="@+id/buttonSelectIbu"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="28dp"
-        android:layout_marginTop="37dp"
         android:text="Pengukuran Ibu" />
 
     <Button
         android:id="@+id/buttonSelectAnak"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/buttonSelectIbu"
-        android:layout_below="@+id/buttonSelectIbu"
         android:text="Pengukuran Anak" />
+    <Button
+        android:id="@+id/buttonTambahIbu"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Tambah Ibu" />
+    <Button
+        android:id="@+id/buttonTambahAnak"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Tambah Anak" />
 
-</RelativeLayout>
+</LinearLayout>

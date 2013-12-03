@@ -30,9 +30,9 @@ public final class R {
         public static final int logo=0x7f020002;
     }
     public static final class id {
-        public static final int action_calibrate_tinggi=0x7f0a0052;
-        public static final int action_remove_item=0x7f0a0053;
-        public static final int action_settings=0x7f0a0051;
+        public static final int action_calibrate_tinggi=0x7f0a0055;
+        public static final int action_remove_item=0x7f0a0056;
+        public static final int action_settings=0x7f0a0054;
         public static final int btnClear=0x7f0a0036;
         public static final int btnClearInput=0x7f0a002e;
         public static final int btnDisconnect=0x7f0a002d;
@@ -59,6 +59,8 @@ public final class R {
         public static final int buttonSimpan=0x7f0a0003;
         public static final int buttonStopBerat=0x7f0a0007;
         public static final int buttonStopTinggi=0x7f0a000b;
+        public static final int buttonTambahAnak=0x7f0a0051;
+        public static final int buttonTambahIbu=0x7f0a0050;
         public static final int chkReceiveText=0x7f0a0030;
         public static final int chkScroll=0x7f0a002f;
         public static final int editCaliper=0x7f0a003d;
@@ -83,7 +85,7 @@ public final class R {
         public static final int listIbu=0x7f0a004d;
         public static final int listKehamilan=0x7f0a0039;
         public static final int listView1=0x7f0a003b;
-        public static final int lstContent=0x7f0a0050;
+        public static final int lstContent=0x7f0a0053;
         public static final int lstDevices=0x7f0a001f;
         public static final int radioBerdiri=0x7f0a0019;
         public static final int radioNo=0x7f0a0028;
@@ -114,6 +116,7 @@ public final class R {
         public static final int txtReceive=0x7f0a0032;
         public static final int valueRead=0x7f0a0033;
         public static final int viewScroll=0x7f0a0031;
+        public static final int webView=0x7f0a0052;
     }
     public static final class layout {
         public static final int activity_anak=0x7f030000;
@@ -127,8 +130,10 @@ public final class R {
         public static final int activity_select_anak=0x7f030008;
         public static final int activity_select_ibu=0x7f030009;
         public static final int activity_select_mode=0x7f03000a;
-        public static final int ibu=0x7f03000b;
-        public static final int list_item=0x7f03000c;
+        public static final int activity_web=0x7f03000b;
+        public static final int ibu=0x7f03000c;
+        public static final int list_item=0x7f03000d;
+        public static final int web_view=0x7f03000e;
     }
     public static final class menu {
         public static final int anak=0x7f090000;
@@ -142,6 +147,7 @@ public final class R {
         public static final int select_anak=0x7f090008;
         public static final int select_ibu=0x7f090009;
         public static final int select_mode=0x7f09000a;
+        public static final int web=0x7f09000b;
     }
     public static final class string {
         public static final int action_settings=0x7f070001;
@@ -168,6 +174,7 @@ public final class R {
         public static final int title_activity_select_anak=0x7f070015;
         public static final int title_activity_select_ibu=0x7f070012;
         public static final int title_activity_select_mode=0x7f070014;
+        public static final int title_activity_web=0x7f070018;
     }
     public static final class style {
         /** 

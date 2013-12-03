@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.http.Header;
@@ -16,6 +17,7 @@ import org.apache.http.client.CookieStore;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.cookie.Cookie;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -29,15 +31,18 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.util.Log;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 
 @SuppressLint("NewApi")
 public class HttpClient {
 	private static final String TAG = "HttpClient";
 	private static ArrayList<Header> headers;
 	private static CookieStore cookieStore = new BasicCookieStore();
+	public static DefaultHttpClient httpclient = MyApplication.getClient();
 	public static Object SendHttpPost(String URL, JSONObject jsonObjSend) {
 		try {
-			DefaultHttpClient httpclient = new DefaultHttpClient();
+			
 			HttpPost httpPostRequest = new HttpPost(URL);
 
 			StringEntity se;
@@ -57,8 +62,18 @@ public class HttpClient {
 			HttpContext localContext = new BasicHttpContext();
             // Bind custom cookie store to the local context
             localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+            httpclient.setCookieStore(cookieStore);
             
 			HttpResponse response = (HttpResponse) httpclient.execute(httpPostRequest,localContext);
+			/*List<Cookie> cookies = cookieStore.getCookies();
+			
+	        CookieManager cookieManager = CookieManager.getInstance();
+			for (int i = 0; i < cookies.size(); i++) {
+				Cookie sessionCookie = cookies.get(i);
+				String cookieString = sessionCookie.getName() + "=" + sessionCookie.getValue() + "; domain=" + sessionCookie.getDomain();
+				cookieManager.setCookie(sessionCookie.getDomain(), cookieString);
+	            CookieSyncManager.getInstance().sync(); 
+			}*/
 			if(headers == null)
 			{
 				Header[] kk = response.getAllHeaders();
@@ -123,6 +138,10 @@ public class HttpClient {
 		}
 		return null;
 	}
+	
+	public static CookieStore getCookieStore(){
+		return cookieStore;
+	}
 
 	public static Object SendHttpGet(String URL){
 		String jsonRaw = getHttp(URL);
@@ -150,11 +169,11 @@ public class HttpClient {
 			return null;
 		return null;
 	}
-	private static String getHttp(String url){
+	public static String getHttp(String url){
 		String output;
 		try {
-		    DefaultHttpClient httpClient = new DefaultHttpClient();
-		    HttpGet httpGet = new HttpGet(url);
+			httpclient.setCookieStore(cookieStore);
+			HttpGet httpGet = new HttpGet(url);
 		    if(headers!=null){
 				for(int i=0;i<headers.size();i++){
 					httpGet.setHeader(headers.get(i));
@@ -165,7 +184,7 @@ public class HttpClient {
             // Bind custom cookie store to the local context
             localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
             
-		    HttpResponse httpResponse = httpClient.execute(httpGet,localContext);
+		    HttpResponse httpResponse = httpclient.execute(httpGet,localContext);
 		    HttpEntity httpEntity = httpResponse.getEntity();
 		    output = EntityUtils.toString(httpEntity);
 		    return output;

@@ -15,6 +15,7 @@
 	<EditText 
 	    android:id="@+id/editUsername"
 	    android:layout_height="wrap_content"
+	    android:text="admin"
 	    android:layout_width="fill_parent"/>
 	<TextView 
 	    android:layout_height="wrap_content"
@@ -24,6 +25,7 @@
 	    android:id="@+id/editPassword"
 	    android:layout_height="wrap_content"
 	    android:layout_width="fill_parent"
+	    android:text="admin"
 	    android:inputType="textPassword"/>
 	<Button 
 	    android:id="@+id/buttonLogin"

@@ -325,6 +325,7 @@ public class Homescreen extends Activity {
 
 	@Override
 	protected void onStop() {
+		unregisterReceiver(mReceiver);
 		super.onStop();
 	}
 	
@@ -608,7 +609,7 @@ public class Homescreen extends Activity {
 			try{
 			String h = String.valueOf(RSID.get(position));
 			holder.tv.setText(device.getName() + "\n   " +h);
-			}catch(ArrayIndexOutOfBoundsException ex){
+			}catch(IndexOutOfBoundsException ex){
 				ex.printStackTrace();
 			}
 			return vi;

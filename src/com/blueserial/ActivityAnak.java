@@ -46,7 +46,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
-@SuppressLint("ShowToast")
+@SuppressLint({ "ShowToast", "NewApi" })
 public class ActivityAnak extends Activity {
 	public final static String BALITA_LIST = "/antro/balita/";
 	public final static String LOGIN = "/ws/usr/login/";
@@ -74,6 +74,7 @@ public class ActivityAnak extends Activity {
 	
 	private List<Runnable> readThreads;
 	private ArrayList<BluetoothDevice> devices;
+	private int selectedDevice=0;
 	private boolean exitOnDisconect = true;
 	private UUID mDeviceUUID;
 	private Handler loginHandler;
@@ -449,7 +450,6 @@ public class ActivityAnak extends Activity {
 
 		@Override
 		protected Void doInBackground(Void... devices) {
-
 			try {
 				if (mBTSocket == null) {
 					Method m = mDevice.getClass().getMethod("createRfcommSocket", new Class[] {int.class});
@@ -457,7 +457,7 @@ public class ActivityAnak extends Activity {
 					BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
 					mBTSocket.connect();
 					OutputStream os = mBTSocket.getOutputStream();
-					InputStream is = mBTSocket.getInputStream();
+					InputStream is  = mBTSocket.getInputStream();
 					/*os.write("IDENTIFIKASI\r".getBytes("ASCII"));
 					byte[] buff = new byte[256];
 					is.read(buff);
@@ -467,7 +467,7 @@ public class ActivityAnak extends Activity {
 					String strInput = new String(buff, 0, i);
 					String[] p = strInput.split("\r\n");*/
 					os.write("SET AWAL\r\n".getBytes("ASCII"));
-					Thread.sleep(2500);
+					
 					os.write("GET NILAI\r\n".getBytes("ASCII"));
 				}
 			} catch (IOException e) {
@@ -491,10 +491,6 @@ public class ActivityAnak extends Activity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				mes = e.getMessage();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				mes = e.getMessage();
 			}
 			return null;
 		}
@@ -515,6 +511,102 @@ public class ActivityAnak extends Activity {
 			//progressDialog.dismiss();
 		}
 
+	}
+	private class ReadInput2 implements Runnable{
+		private boolean bStop = false;
+		private Thread t;
+		boolean threadStop=false;
+		BluetoothSocket mBTSocket;
+		Map<String,EditText> pp;
+		StringHandler sh;
+		boolean running;
+		public void setRunning(boolean run){
+			running = run;
+		}
+		public ReadInput2(BluetoothSocket sock) {
+			mBTSocket = sock;
+			running=true;
+			pp=maps;
+			sh = new StringHandler();
+			
+			t = new Thread(this, "Input Thread");
+			t.start();
+		}
+		@Override
+		public void run() {
+			
+			while(running){
+				BluetoothDevice devX = devices.get(selectedDevice);
+				int errorCount = 0;
+				while(true)
+				try {
+					Method m;
+					m = devX.getClass().getMethod("createRfcommSocket", new Class[] {int.class});
+					mBTSocket = (BluetoothSocket) m.invoke(devX, 1);
+					BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
+					mBTSocket.connect();
+					OutputStream os = mBTSocket.getOutputStream();
+					InputStream is = mBTSocket.getInputStream();
+					os.write("SET AWAL\r\n".getBytes("ASCII"));
+					try {
+						Thread.sleep(2500);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					os.write("GET NILAI\r\n".getBytes("ASCII"));
+					byte[] buff = new byte[256];
+					is.read(buff);
+					int i = 0;
+					/*
+					 * This is needed because new String(buffer) is taking the entire buffer i.e. 256 chars on Android 2.3.4 http://stackoverflow.com/a/8843462/1287554
+					 */
+					for (i = 0; i < buff.length && buff[i] != 0; i++) {
+					}
+					final String strInput = new String(buff, 0, i);
+					int g=0;
+					String[] lines = strInput.split("\r\n");
+					try{							
+						if(lines[g].isEmpty()|| !maps.containsKey(String.valueOf(lines[g].charAt(0))))
+						{
+							g++;
+						}
+						
+						String ll = new String(lines[g].split("\\s")[0]);
+						final EditText curr = maps.get(ll);
+						curr.post(new Runnable() {
+						
+						@Override
+						public void run() {
+							Log.i("SENSOR", strInput);
+							String j = sh.Handle(strInput);
+							if(!j.isEmpty())
+							curr.setText(j);
+						}
+					});}
+					catch(Exception ex){
+						ex.printStackTrace();
+					}
+				} catch (NoSuchMethodException e1) {
+					e1.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					errorCount++;
+					e.printStackTrace();
+					if(errorCount>9){
+						break;
+					}else{
+						continue;
+					}					
+				}
+			}
+			
+		}
 	}
 	private class ReadInput implements Runnable {
 
