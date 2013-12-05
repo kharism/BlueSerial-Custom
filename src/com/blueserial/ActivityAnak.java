@@ -64,6 +64,8 @@ public class ActivityAnak extends Activity {
 	private Button toggleCaliper;
 	private Button buttonStopBerat;
 	private Button buttonStopTinggi;
+	private Button buttonStopLila;
+	private Button buttonToggleLila;
 	
 	private EditText editTextBerat;
 	private EditText editTextTinggi;
@@ -74,6 +76,7 @@ public class ActivityAnak extends Activity {
 	
 	private List<Runnable> readThreads;
 	private ArrayList<BluetoothDevice> devices;
+	private ArrayList<BluetoothSocket> sockets;
 	private int selectedDevice=0;
 	private boolean exitOnDisconect = true;
 	private UUID mDeviceUUID;
@@ -91,6 +94,7 @@ public class ActivityAnak extends Activity {
 		readThreads = new ArrayList<Runnable>();
 		Intent intent = getIntent();
 		loginHandler = new Handler();
+		sockets = new ArrayList<BluetoothSocket>();
 		prefs = this.getSharedPreferences("com.blueserial", Context.MODE_PRIVATE);
 		activity = this;
 		Bundle b = intent.getExtras();
@@ -105,6 +109,8 @@ public class ActivityAnak extends Activity {
 		toggleCaliper = (Button) findViewById(R.id.toggleCaliper);
 		buttonStopBerat = (Button) findViewById(R.id.buttonStopBerat);
 		buttonStopTinggi = (Button) findViewById(R.id.buttonStopTinggi);
+		buttonStopLila = (Button)findViewById(R.id.buttonStopLila);
+		buttonToggleLila = (Button)findViewById(R.id.buttontoggleLila);
 		
 		editTextBerat = (EditText) findViewById(R.id.editTextBerat);
 		editTextTinggi = (EditText) findViewById(R.id.editTextTinggi);
@@ -127,12 +133,19 @@ public class ActivityAnak extends Activity {
 		if(prefs.contains("subscapular")){
 			editTextSubskapular.setText(prefs.getString("subscapular", ""));
 		}
+		if(prefs.contains("lila")){
+			editTextLila.setText(prefs.getString("lila", ""));
+		}
+		if(prefs.contains("lika")){
+			editTextLika.setText(prefs.getString("lika", ""));
+		}
 		
 		maps = new HashMap<String, EditText>();
 		maps.put("T", editTextTinggi);
 		maps.put("S", editTextBerat);
 		maps.put("LE", editTextTricep);
 		maps.put("BB", editTextBerat);
+		maps.put("LL", editTextLila);
 		
 		mDeviceUUID = UUID.fromString(b.getString(Homescreen.DEVICE_UUID));
 		devices = b.getParcelableArrayList(Homescreen.DEVICES_LISTS);		
@@ -164,6 +177,16 @@ public class ActivityAnak extends Activity {
 			@Override
 			public void onClick(View v) {
 				
+			}
+		});
+		buttonStopLila.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				if(maps.containsKey("LL"))
+					maps.remove("LL");
+				else
+					maps.put("LL", editTextLila);
 			}
 		});
 		buttonStopTinggi.setOnClickListener(new OnClickListener() {
@@ -212,6 +235,16 @@ public class ActivityAnak extends Activity {
 				editTextTricep.setEnabled(true);
 			}
 		});
+		buttonToggleLila.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if(maps.get("LL")==editTextLila)
+					maps.put("LL", editTextLika);
+				else
+				maps.put("LL", editTextLila);
+			}
+		});
 		toggleCaliper.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -238,8 +271,8 @@ public class ActivityAnak extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				for(int i=readThreads.size()-1;i>=0;i--){
-					ReadInput u = (ReadInput)readThreads.get(i);
-					u.stop();
+					ReadInput2 u = (ReadInput2)readThreads.get(i);
+					u.setRunning(false);					
 					readThreads.remove(u);
 				}
 			}
@@ -248,9 +281,69 @@ public class ActivityAnak extends Activity {
 		//new loginTask().execute();
         IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
         this.registerReceiver(mReceiver, filter3);
-		for(int i=0;i<devices.size();i++){
+        if(devices.size()>0)
+        new ConnectBt2Task().execute();
+        
+		/*for(int i=0;i<devices.size();i++){
 			new ConnectBT(devices.get(i)).execute();			
+		}*/
+	}
+	private class ConnectBt2Task extends AsyncTask<Void, Void, Void>{
+		@Override
+		protected void onPreExecute() {
+			int loopFail=0;
+			for(int i=0;i<devices.size();i++){
+				Method m;
+				try {
+					m = devices.get(i).getClass().getMethod("createRfcommSocket", new Class[] {int.class});
+					BluetoothSocket mBTSocket = (BluetoothSocket) m.invoke(devices.get(i), 1);
+					mBTSocket.connect();
+					Log.i("Ambil Socket",devices.get(i).getName());
+					sockets.add(mBTSocket);
+				} catch (NoSuchMethodException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+					loopFail++;
+					if(loopFail<3){
+						i--;
+					}
+					else
+					{
+						loopFail=0;
+						Log.i("CONNECTION ERROR", "kebacut suwi device "+devices.get(i).getName()+" gagal koneksi, lanjut gan");
+						Toast.makeText(getApplicationContext(), "device "+devices.get(i).getName()+" gagal koneksi", Toast.LENGTH_SHORT);
+					}
+					Log.i("CONNECTION ERROR", "device "+devices.get(i).getName()+" gagal koneksi");
+					Toast.makeText(activity, "device "+devices.get(i).getName()+" gagal koneksi", Toast.LENGTH_SHORT);
+				}
+			}
+			int len = sockets.size();
+			super.onPreExecute();
 		}
+		@Override
+		protected Void doInBackground(Void... params) {
+			ReadInput2 rr = new ReadInput2();
+			readThreads.add(rr);
+	        Thread t = new Thread(rr);
+	        t.run();
+	        return null;
+		}
+		@Override
+		protected void onPostExecute(Void result) {
+			
+		}
+		
 	}
 	private final BroadcastReceiver mReceiver = new BroadcastReceiver(){
 
@@ -315,12 +408,15 @@ public class ActivityAnak extends Activity {
 		prefs.edit().putString("berat", editTextBerat.getText().toString()).commit();
 		prefs.edit().putString("tricep", editTextTricep.getText().toString()).commit();
 		prefs.edit().putString("subscapular", editTextSubskapular.getText().toString()).commit();
+		prefs.edit().putString("lila", editTextLila.getText().toString()).commit();
+		prefs.edit().putString("lika", editTextLika.getText().toString()).commit();
 		
 		for(int i=readThreads.size()-1;i>=0;i--){
-			ReadInput u = (ReadInput)readThreads.get(i);
-			u.stop();
+			ReadInput2 u = (ReadInput2)readThreads.get(i);
+			u.setRunning(false);
 			readThreads.remove(u);
-		}try{
+		}
+		try{
 		this.unregisterReceiver(mReceiver);
 		}catch(IllegalArgumentException ex){
 			ex.printStackTrace();
@@ -523,14 +619,14 @@ public class ActivityAnak extends Activity {
 		public void setRunning(boolean run){
 			running = run;
 		}
-		public ReadInput2(BluetoothSocket sock) {
-			mBTSocket = sock;
+		public ReadInput2() {
+			
 			running=true;
 			pp=maps;
 			sh = new StringHandler();
 			
-			t = new Thread(this, "Input Thread");
-			t.start();
+			//t = new Thread(this, "Input Thread");
+			//t.start();
 		}
 		@Override
 		public void run() {
@@ -538,36 +634,64 @@ public class ActivityAnak extends Activity {
 			while(running){
 				BluetoothDevice devX = devices.get(selectedDevice);
 				int errorCount = 0;
+				OutputStream os=null;
+				InputStream is=null;
 				while(true)
 				try {
-					Method m;
-					m = devX.getClass().getMethod("createRfcommSocket", new Class[] {int.class});
-					mBTSocket = (BluetoothSocket) m.invoke(devX, 1);
+					mBTSocket = sockets.get(selectedDevice);
 					BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
-					mBTSocket.connect();
-					OutputStream os = mBTSocket.getOutputStream();
-					InputStream is = mBTSocket.getInputStream();
-					os.write("SET AWAL\r\n".getBytes("ASCII"));
+					os = mBTSocket.getOutputStream();
+					is = mBTSocket.getInputStream();
+					/*os.write("SET AWAL\r\n".getBytes("ASCII"));
 					try {
 						Thread.sleep(2500);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					}
+					}*/
+					Log.i("Senfing Message","GET NILAI\r\n");
 					os.write("GET NILAI\r\n".getBytes("ASCII"));
 					byte[] buff = new byte[256];
-					is.read(buff);
+
+					try {
+						Thread.sleep(300);
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					int buffIdx=0;
+					while(buffIdx<256){
+						if(is.available()>0){
+						int c = is.read();
+						buff[buffIdx] = (byte)c;
+						buffIdx++;
+						}
+					}
+					
+					try {
+						//Thread.sleep(500);
+						os.write("STOP\r\n".getBytes("ASCII"));
+						//is.reset();
+						//is.close();
+						//os.close();
+						//mBTSocket.close();
+						
+					} catch (IOException e) {
+						e.printStackTrace();
+					} /*catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}*/
+					selectedDevice = (selectedDevice+1)%sockets.size();
 					int i = 0;
-					/*
-					 * This is needed because new String(buffer) is taking the entire buffer i.e. 256 chars on Android 2.3.4 http://stackoverflow.com/a/8843462/1287554
-					 */
 					for (i = 0; i < buff.length && buff[i] != 0; i++) {
 					}
 					final String strInput = new String(buff, 0, i);
 					int g=0;
 					String[] lines = strInput.split("\r\n");
 					try{							
-						if(lines[g].isEmpty()|| !maps.containsKey(String.valueOf(lines[g].charAt(0))))
+						String gt = lines[g].split("\\s")[0];
+						if(lines[g].isEmpty()|| !maps.containsKey(gt))
 						{
 							g++;
 						}
@@ -583,17 +707,13 @@ public class ActivityAnak extends Activity {
 							if(!j.isEmpty())
 							curr.setText(j);
 						}
-					});}
+					});
+					break;	
+				}
 					catch(Exception ex){
 						ex.printStackTrace();
 					}
-				} catch (NoSuchMethodException e1) {
-					e1.printStackTrace();
 				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
 					errorCount++;
@@ -603,6 +723,15 @@ public class ActivityAnak extends Activity {
 					}else{
 						continue;
 					}					
+				}
+			
+			}
+			for(int i=0;i<sockets.size();i++){
+				try {
+					sockets.get(i).close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 			

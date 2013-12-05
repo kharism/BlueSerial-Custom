@@ -11,13 +11,22 @@ public class LilaLikaHandler extends AbstractHandler{
 	@Override
 	public String Handle(String a) {
 		// TODO Auto-generated method stub
-		return null;
+				try{
+					String[] p = a.split("\\s");
+					if(Double.parseDouble(p[p.length-2])!=0)
+						return p[p.length-2];
+					else
+						return "";
+				}
+				catch(Exception ex){
+					String mes = ex.getMessage();
+					return "";
+				}
 	}
 
 	@Override
 	public String getSatuan(String a) {
-		// TODO Auto-generated method stub
-		return null;
+		return "mm";
 	}
 
 }

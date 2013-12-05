@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 @SuppressLint("NewApi")
 public class StringHandler {
@@ -13,6 +14,7 @@ public class StringHandler {
 		mHandlers = new HashMap<String, AbstractHandler>();
 		mHandlers.put("T", new TinggiHandler());
 		mHandlers.put("S", new BeratHandler());
+		mHandlers.put("LL", new LilaLikaHandler());
 		mHandlers.put("LE", new CaliperHandler());
 		mHandlers.put("BB",new BBeratHandler());
 		mHandlers.put("BI",new BIHandler());
@@ -27,9 +29,10 @@ public class StringHandler {
 	}
 	public String Handle(String input){
 		String[] lines=input.split("\r\n");
-		int g=0;
-		if(lines[g].isEmpty() || !this.mHandlers.containsKey(lines[g].split("\\s")[0])){
-			g++;
+		int g=lines.length-1;
+		
+		if(!Pattern.matches("[a-zA-Z]*(\\s)+(-)?[0-9]*(\\s)*[a-zA-Z]*\\n", lines[g])||lines[g].isEmpty() || !this.mHandlers.containsKey(lines[g].split("\\s")[0])){
+			g--;
 		}
 		String h = "";
 		try{

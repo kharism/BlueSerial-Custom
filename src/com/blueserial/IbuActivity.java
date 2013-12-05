@@ -2,6 +2,7 @@ package com.blueserial;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -58,8 +59,11 @@ public class IbuActivity extends Activity {
 	private ProgressDialog progressDialog;
 	private UUID mDeviceUUID;
 	private Activity activity;
+	private int selectedDevice;
+	private HashMap<String, EditText> maps;
 	private List<Runnable> readThreads;
 	private ArrayList<BluetoothDevice> devices;
+	private ArrayList<BluetoothSocket> sockets;
 	private boolean exitOnDisconect = true;
 	private boolean isLogedIn = false;
 	private String sessid;
@@ -87,20 +91,24 @@ public class IbuActivity extends Activity {
 		readThreads = new ArrayList<Runnable>();
 		prefs = this.getSharedPreferences("com.blueserial", Context.MODE_PRIVATE);;
 		Intent intent = getIntent();
+		sockets = new ArrayList<BluetoothSocket>();
 		Bundle b = intent.getExtras();
 		labelIbu = (TextView)findViewById(R.id.textView2);
 		labelIbu.setText(b.getString(SelectIbuActivity.NAMA_IBU));
 		activity = this;
+		maps = new HashMap<String, EditText>();
+		maps.put("S", editTextBerat);
+		maps.put("BB", editTextBerat);
+		maps.put("BI", editTextBerat);
+		maps.put("LL", editTextLila);
 		editHb = (EditText) findViewById(R.id.editHb);
 		mBtnHbManual = (Button) findViewById(R.id.buttonManualHb);
 		buttonManualBerat = (Button) findViewById(R.id.buttonManualBerat);
-		buttonManualTinggi = (Button) findViewById(R.id.buttonManualTinggi);
 		buttonManualLila = (Button) findViewById(R.id.buttonManualLila);
 		buttonIbuSet = (Button) findViewById(R.id.buttonIbuSet);
 		buttonSimpan = (Button) findViewById(R.id.buttonSimpan);
 		editHb = (EditText) findViewById(R.id.editHb);
 		editTextLila = (EditText) findViewById(R.id.editTextLila);
-		editTextTinggi = (EditText) findViewById(R.id.editTextTinggi);
 		editTextBerat = (EditText) findViewById(R.id.editTextBerat);
 		mDeviceUUID = UUID.fromString(b.getString(Homescreen.DEVICE_UUID));
 		devices = b.getParcelableArrayList(Homescreen.DEVICES_LISTS);
@@ -136,15 +144,6 @@ public class IbuActivity extends Activity {
 				
 			}
 		});
-		buttonManualTinggi.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				editTextTinggi.setInputType(InputType.TYPE_CLASS_TEXT);
-				editTextTinggi.setEnabled(true);
-			}
-		});
 		buttonManualLila.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -169,9 +168,67 @@ public class IbuActivity extends Activity {
         IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
         
         this.registerReceiver(mReceiver, filter3);
-		for(int i=0;i<devices.size();i++){
+        new ConnectBt2Task().execute();
+		/*for(int i=0;i<devices.size();i++){
 			new ConnectBT(devices.get(i)).execute();
+		}*/
+	}
+	private class ConnectBt2Task extends AsyncTask<Void, Void, Void>{
+		@Override
+		protected void onPreExecute() {
+			int loopFail=0;
+			for(int i=0;i<devices.size();i++){
+				Method m;
+				try {
+					m = devices.get(i).getClass().getMethod("createRfcommSocket", new Class[] {int.class});
+					BluetoothSocket mBTSocket = (BluetoothSocket) m.invoke(devices.get(i), 1);
+					mBTSocket.connect();
+					Log.i("Ambil Socket",devices.get(i).getName());
+					sockets.add(mBTSocket);
+				} catch (NoSuchMethodException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+					loopFail++;
+					if(loopFail<3){
+						i--;
+					}
+					else
+					{
+						loopFail=0;
+						Log.i("CONNECTION ERROR", "kebacut suwi device "+devices.get(i).getName()+" gagal koneksi, lanjut gan");
+						Toast.makeText(getApplicationContext(), "device "+devices.get(i).getName()+" gagal koneksi", Toast.LENGTH_SHORT);
+					}
+					Log.i("CONNECTION ERROR", "device "+devices.get(i).getName()+" gagal koneksi");
+					Toast.makeText(activity, "device "+devices.get(i).getName()+" gagal koneksi", Toast.LENGTH_SHORT);
+				}
+			}
+			int len = sockets.size();
+			super.onPreExecute();
 		}
+		@Override
+		protected Void doInBackground(Void... params) {
+			ReadInput2 rr = new ReadInput2();
+			readThreads.add(rr);
+	        Thread t = new Thread(rr);
+	        t.run();
+	        return null;
+		}
+		@Override
+		protected void onPostExecute(Void result) {
+			
+		}
+		
 	}
 	public void onRadioButtonClicked(View view) {
 	    boolean checked = ((RadioButton)view).isChecked();
@@ -205,6 +262,135 @@ public class IbuActivity extends Activity {
 		}
 		
 	};
+	private class ReadInput2 implements Runnable{
+		private boolean bStop = false;
+		private Thread t;
+		boolean threadStop=false;
+		BluetoothSocket mBTSocket;
+		Map<String,EditText> pp;
+		StringHandler sh;
+		boolean running;
+		public void setRunning(boolean run){
+			running = run;
+		}
+		public ReadInput2() {
+			
+			running=true;
+			pp=maps;
+			sh = new StringHandler();
+			
+			//t = new Thread(this, "Input Thread");
+			//t.start();
+		}
+		@Override
+		public void run() {
+			
+			while(running){
+				BluetoothDevice devX = devices.get(selectedDevice);
+				int errorCount = 0;
+				OutputStream os=null;
+				InputStream is=null;
+				while(true)
+				try {
+					mBTSocket = sockets.get(selectedDevice);
+					BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
+					os = mBTSocket.getOutputStream();
+					is = mBTSocket.getInputStream();
+					/*os.write("SET AWAL\r\n".getBytes("ASCII"));
+					try {
+						Thread.sleep(2500);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}*/
+					Log.i("Senfing Message","GET NILAI\r\n");
+					os.write("GET NILAI\r\n".getBytes("ASCII"));
+					byte[] buff = new byte[256];
+
+					try {
+						Thread.sleep(300);
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					int buffIdx=0;
+					while(buffIdx<256){
+						if(is.available()>0){
+						int c = is.read();
+						buff[buffIdx] = (byte)c;
+						buffIdx++;
+						}
+					}
+					
+					try {
+						//Thread.sleep(500);
+						os.write("STOP\r\n".getBytes("ASCII"));
+						//is.reset();
+						//is.close();
+						//os.close();
+						//mBTSocket.close();
+						
+					} catch (IOException e) {
+						e.printStackTrace();
+					} /*catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}*/
+					selectedDevice = (selectedDevice+1)%sockets.size();
+					int i = 0;
+					for (i = 0; i < buff.length && buff[i] != 0; i++) {
+					}
+					final String strInput = new String(buff, 0, i);
+					int g=0;
+					String[] lines = strInput.split("\r\n");
+					try{							
+						String gt = lines[g].split("\\s")[0];
+						if(lines[g].isEmpty()|| !maps.containsKey(gt))
+						{
+							g++;
+						}
+						
+						String ll = new String(lines[g].split("\\s")[0]);
+						final EditText curr = maps.get(ll);
+						curr.post(new Runnable() {
+						
+						@Override
+						public void run() {
+							Log.i("SENSOR", strInput);
+							String j = sh.Handle(strInput);
+							if(!j.isEmpty())
+							curr.setText(j);
+						}
+					});
+					break;	
+				}
+					catch(Exception ex){
+						ex.printStackTrace();
+					}
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					errorCount++;
+					e.printStackTrace();
+					if(errorCount>9){
+						break;
+					}else{
+						continue;
+					}					
+				}
+			
+			}
+			for(int i=0;i<sockets.size();i++){
+				try {
+					sockets.get(i).close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+		}
+	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -291,7 +477,6 @@ public class IbuActivity extends Activity {
 			mBTSocket = sock;
 			sh = new StringHandler();
 			maps = new HashMap<String, EditText>();
-			maps.put("T", editTextTinggi);
 			maps.put("S", editTextBerat);
 			maps.put("BB", editTextBerat);
 			maps.put("BI", editTextBerat);

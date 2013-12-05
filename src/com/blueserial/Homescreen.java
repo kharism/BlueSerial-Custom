@@ -208,7 +208,7 @@ public class Homescreen extends Activity {
 			@Override
 			public void onClick(View v) {
 				ArrayList<BluetoothDevice> devices;
-				if(((MyAdapter) (mLstDevices.getAdapter())).selectedIndex>=0){
+				/*if(((MyAdapter) (mLstDevices.getAdapter())).selectedIndex>=0){
 					devices = new ArrayList<BluetoothDevice>();
 					devices.add(((MyAdapter) (mLstDevices.getAdapter())).getSelectedItem());
 					Intent intent = new Intent(getApplicationContext(), ActivityAnak.class);
@@ -220,7 +220,8 @@ public class Homescreen extends Activity {
 					intent.putExtra(BUFFER_SIZE, mBufferSize);
 					startActivity(intent);
 				}
-				else if(mLstDevices!=null){
+				else*/ 
+				if(mLstDevices!=null){
 					devices = (ArrayList<BluetoothDevice>) ((MyAdapter) (mLstDevices.getAdapter())).getEntireList();					
 					Intent intent = new Intent(getApplicationContext(), ActivityAnak.class);
 					intent.putExtra(DEVICES_LISTS, devices);
@@ -230,8 +231,7 @@ public class Homescreen extends Activity {
 					intent.putExtra(DEVICE_UUID, mDeviceUUID.toString());
 					intent.putExtra(BUFFER_SIZE, mBufferSize);
 					startActivity(intent);
-				}
-				
+				}				
 			}
 		});
 		
@@ -307,6 +307,8 @@ public class Homescreen extends Activity {
 
 	@Override
 	protected void onPause() {
+		unregisterReceiver(mReceiver);
+		
 		Toast.makeText(getApplicationContext(), "pause", Toast.LENGTH_SHORT).show();
 		((MyApplication)getApplication()).setStaticDevList(devList);
 		((MyApplication)getApplication()).setStaticRSID(RSID);
@@ -314,6 +316,8 @@ public class Homescreen extends Activity {
 	}
 	@Override
 	protected void onResume() {
+		registerReceiver(mReceiver, new IntentFilter(BluetoothDevice.ACTION_FOUND));
+		registerReceiver(mReceiver, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED));
 		Toast.makeText(getApplicationContext(), "resume", Toast.LENGTH_SHORT).show();
 		if(((MyApplication)getApplication()).getStaticDevList()!=null){
 			devList = ((MyApplication)getApplication()).getStaticDevList();
@@ -325,7 +329,7 @@ public class Homescreen extends Activity {
 
 	@Override
 	protected void onStop() {
-		unregisterReceiver(mReceiver);
+		
 		super.onStop();
 	}
 	
@@ -607,8 +611,8 @@ public class Homescreen extends Activity {
 			}
 			BluetoothDevice device = myList.get(position);
 			try{
-			String h = String.valueOf(RSID.get(position));
-			holder.tv.setText(device.getName() + "\n   " +h);
+				String h = String.valueOf(RSID.get(position));
+				holder.tv.setText(device.getName() + "\n   " +h);
 			}catch(IndexOutOfBoundsException ex){
 				ex.printStackTrace();
 			}

@@ -1,13 +1,18 @@
 package com.blueserial;
 
+import android.annotation.SuppressLint;
+
+@SuppressLint("NewApi")
 public class CaliperHandler extends AbstractHandler {
 
 	@Override
 	public String Handle(String a) {
 		// TODO Auto-generated method stub
 		try{
-		String[] p = a.split(" ");
-		String number = p[1];
+		String[] p = a.split("\\s");
+		String number = p[2];
+		if(number.isEmpty())
+			number = p[3];
 		int len = number.length()-1;
 		String comma = String.valueOf(number.charAt(len-1))+String.valueOf(number.charAt(len));
 		len -=2;
