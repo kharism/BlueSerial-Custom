@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -37,7 +42,203 @@
         android:text="Simpan" />
     </RelativeLayout>
     
-
+	<LinearLayout
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal">
+        <TextView
+		    android:id="@+id/textNama"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="0.23"
+		    android:visibility="gone"
+		    android:text="Nama Ibu" />
+        <EditText
+        	android:id="@+id/editTextNama"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:layout_weight="0.7"
+        	android:visibility="gone"
+        	android:inputType="none"
+        	android:ems="10" >
+        </EditText>        
+    </LinearLayout>
+    
+	<LinearLayout
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal">
+        <TextView
+		    android:id="@+id/textKtp"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="0.23"
+		    android:visibility="gone"
+		    android:text="Ktp" />
+        <EditText
+        	android:id="@+id/editTextKtp"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:layout_weight="0.7"
+        	android:visibility="gone"
+        	android:inputType="none"
+        	android:ems="10" >
+        </EditText>        
+    </LinearLayout>
+	
+	<LinearLayout
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal">
+        <TextView
+		    android:id="@+id/textTempat"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="0.23"
+		    android:visibility="gone"
+		    android:text="Tempat" />
+        <EditText
+        	android:id="@+id/editTextTempat"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:layout_weight="0.7"
+        	android:visibility="gone"
+        	android:inputType="none"
+        	android:ems="10" >
+        </EditText>        
+    </LinearLayout>
+	<LinearLayout
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal">
+        <TextView
+		    android:id="@+id/textUmur"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="0.23"
+		    android:visibility="gone"
+		    android:text="Umur" />
+        <EditText
+        	android:id="@+id/editTextUmur"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:layout_weight="0.7"
+        	
+        	android:visibility="gone"
+        	android:inputType="number"
+        	android:ems="10" >
+        </EditText>        
+    </LinearLayout>
+	
+	<LinearLayout
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal">
+        <TextView
+		    android:id="@+id/textTanggalLahir"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="0.23"
+		    android:visibility="gone"        	
+		    android:text="Tanggal Lahir" />
+        <EditText
+        	android:id="@+id/editTextTanggal"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:layout_weight="0.7"
+        	android:visibility="gone"
+        	android:inputType="date"
+        	android:ems="10" >
+        </EditText>        
+    </LinearLayout>
+    
+	<LinearLayout
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal">
+        <TextView
+		    android:id="@+id/textPendidikan"
+		    android:layout_width="wrap_content"
+		    android:visibility="gone"
+        	
+		    android:layout_height="wrap_content"
+		    android:layout_weight="0.23"
+		    android:text="Pendidikan" />
+        <Spinner
+        	android:id="@+id/spinnerPendidikan"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:layout_weight="0.7"
+        	android:visibility="gone"
+        	android:entries="@array/pekerjaan_ibu"
+        	android:ems="10" />
+    </LinearLayout>
+	
+	<LinearLayout
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal">
+        <TextView
+		    android:id="@+id/textAgama"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="0.23"
+		    android:visibility="gone"
+        	
+		    android:text="Pendidikan" />
+        <Spinner
+        	android:id="@+id/spinnerAgama"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:layout_weight="0.7"
+        	android:visibility="gone"
+        	android:entries="@array/agama"
+        	android:ems="10" />
+    </LinearLayout>
+	
+	<LinearLayout
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal">
+        <TextView
+		    android:id="@+id/textdarah"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="0.23"
+		    android:visibility="gone"
+        	
+		    android:text="Golongan Darah" />
+        <Spinner
+        	android:id="@+id/spinnerDarah"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:layout_weight="0.7"
+        	android:visibility="gone"
+        	android:entries="@array/darah"
+        	android:ems="10" />
+    </LinearLayout>
+	
+	<LinearLayout
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal">
+        <TextView
+		    android:id="@+id/textPekerjaan"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="0.23"
+		    android:visibility="gone"
+		    android:text="Pekerjaan" />
+        <EditText
+        	android:id="@+id/editTextPekerjaan"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:layout_weight="0.7"
+        	android:visibility="gone"
+        	android:ems="10" >
+        </EditText>        
+    </LinearLayout>
+	
 	<LinearLayout
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
@@ -57,7 +258,7 @@
         	android:enabled="false"
         	android:inputType="none"
         	android:ems="10" >
-            <requestFocus />
+            
     	</EditText>
 
     	<Button
@@ -65,8 +266,13 @@
     	    android:layout_width="wrap_content"
     	    android:layout_height="wrap_content"
     	    android:text="Manual" />
-
+		<Button
+    	    android:id="@+id/buttonSetBerat"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:text="Ok" />
     </LinearLayout>
+    
 	<LinearLayout
     	android:layout_width="match_parent"
     	android:layout_height="wrap_content"
@@ -77,12 +283,14 @@
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
 		    android:layout_weight="0.23"
+		    android:visibility="gone"
 		    android:text="Tinggi Badan" />
     	<EditText
         	android:id="@+id/editTextTinggi"
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
         	android:layout_weight="0.7"
+        	android:visibility="gone"
         	android:enabled="false"
         	android:inputType="none"
         	android:ems="10" >
@@ -93,8 +301,14 @@
     	    android:id="@+id/buttonManualTinggi"
     	    android:layout_width="wrap_content"
     	    android:layout_height="wrap_content"
+    	    android:visibility="gone"
     	    android:text="Manual" />
-
+		<Button
+    	    android:id="@+id/buttonSetTinggi"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:visibility="gone"
+    	    android:text="Ok" />
     </LinearLayout>
 	
     <LinearLayout
@@ -126,7 +340,11 @@
     	    android:layout_width="wrap_content"
     	    android:layout_height="wrap_content"
     	    android:text="Manual" />
-
+		<Button
+    	    android:id="@+id/buttonSetLila"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:text="Ok" />
     </LinearLayout>    
     <LinearLayout
     	android:layout_width="match_parent"
@@ -157,7 +375,11 @@
     	    android:layout_width="wrap_content"
     	    android:layout_height="wrap_content"
     	    android:text="Manual" />
-
+		<Button
+    	    android:id="@+id/buttonSetHb"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:text="Ok" />
     </LinearLayout>
     
    	<LinearLayout
@@ -200,3 +422,4 @@
         android:text="Set" />
      
 </LinearLayout>
+</ScrollView>

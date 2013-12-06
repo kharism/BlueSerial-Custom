@@ -94,6 +94,10 @@
             android:name="com.blueserial.WebActivity"
             android:label="@string/title_activity_web" >
         </activity>
+        <activity
+            android:name="com.blueserial.RegistrasiIbu"
+            android:label="Registrasi Ibu" >
+        </activity>
     </application>
 
 </manifest>

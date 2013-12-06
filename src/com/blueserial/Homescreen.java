@@ -134,6 +134,40 @@ public class Homescreen extends Activity {
 		heading = (TextView) findViewById(R.id.txtListHeading);
 		mLstDevices = (ListView) findViewById(R.id.lstDevices);
 		
+		mButtonIbu.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				ArrayList<BluetoothDevice> devices;
+				if(((MyAdapter) (mLstDevices.getAdapter())).selectedIndex>=0){
+					devices = new ArrayList<BluetoothDevice>();
+					devices.add(((MyAdapter) (mLstDevices.getAdapter())).getSelectedItem());
+					Intent intent = new Intent(getApplicationContext(), IbuActivity.class);
+					intent.putExtra(DEVICES_LISTS, devices);
+					try{
+						intent.putExtra(PilihKehamilanActivity.KEHAMILAN_DIPILIH, kehamilan.toString());
+						intent.putExtra(SelectIbuActivity.NAMA_IBU, namaIbu);
+					}catch(NullPointerException ex){}
+					intent.putExtra(DEVICE_UUID, mDeviceUUID.toString());
+					intent.putExtra(BUFFER_SIZE, mBufferSize);
+					startActivity(intent);
+				}
+				else if(mLstDevices!=null){
+				devices = (ArrayList<BluetoothDevice>) ((MyAdapter) (mLstDevices.getAdapter())).getEntireList();
+				Intent intent = new Intent(getApplicationContext(), IbuActivity.class);
+				intent.putExtra(DEVICES_LISTS, devices);
+				try{
+					intent.putExtra(PilihKehamilanActivity.KEHAMILAN_DIPILIH, kehamilan.toString());
+					intent.putExtra(SelectIbuActivity.NAMA_IBU, namaIbu);
+				}catch(NullPointerException ex){}
+				
+				intent.putExtra(DEVICE_UUID, mDeviceUUID.toString());
+				intent.putExtra(BUFFER_SIZE, mBufferSize);
+				startActivity(intent);
+				}
+			}
+		});
+		
 		if(intent.getExtras().containsKey(PilihKehamilanActivity.KEHAMILAN_DIPILIH))
 		try {
 			kehamilan = new JSONArray(intent.getExtras().getString(PilihKehamilanActivity.KEHAMILAN_DIPILIH));
@@ -150,7 +184,24 @@ public class Homescreen extends Activity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}else if(intent.getExtras().containsKey(RegistrasiIbu.REGISTRASI_IBU)){
+			mButtonAnak.setVisibility(View.INVISIBLE);
+			mButtonIbu.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View arg0) {
+					ArrayList<BluetoothDevice> devices;
+					devices = new ArrayList<BluetoothDevice>();
+					devices = (ArrayList<BluetoothDevice>) ((MyAdapter) (mLstDevices.getAdapter())).getEntireList();
+					
+					Intent i = new Intent(getApplicationContext(),RegistrasiIbu.class);
+					i.putExtra(DEVICES_LISTS, devices);
+					i.putExtra(DEVICE_UUID, mDeviceUUID.toString());
+					i.putExtra(BUFFER_SIZE, mBufferSize);
+					startActivity(i);
+				}
+			});
 		}
+		
 		if(intent.getExtras().containsKey(SelectIbuActivity.NAMA_IBU)){
 			namaIbu = intent.getExtras().getString(SelectIbuActivity.NAMA_IBU);
 		}
@@ -235,39 +286,7 @@ public class Homescreen extends Activity {
 			}
 		});
 		
-		mButtonIbu.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				ArrayList<BluetoothDevice> devices;
-				if(((MyAdapter) (mLstDevices.getAdapter())).selectedIndex>=0){
-					devices = new ArrayList<BluetoothDevice>();
-					devices.add(((MyAdapter) (mLstDevices.getAdapter())).getSelectedItem());
-					Intent intent = new Intent(getApplicationContext(), IbuActivity.class);
-					intent.putExtra(DEVICES_LISTS, devices);
-					try{
-						intent.putExtra(PilihKehamilanActivity.KEHAMILAN_DIPILIH, kehamilan.toString());
-						intent.putExtra(SelectIbuActivity.NAMA_IBU, namaIbu);
-					}catch(NullPointerException ex){}
-					intent.putExtra(DEVICE_UUID, mDeviceUUID.toString());
-					intent.putExtra(BUFFER_SIZE, mBufferSize);
-					startActivity(intent);
-				}
-				else if(mLstDevices!=null){
-				devices = (ArrayList<BluetoothDevice>) ((MyAdapter) (mLstDevices.getAdapter())).getEntireList();
-				Intent intent = new Intent(getApplicationContext(), IbuActivity.class);
-				intent.putExtra(DEVICES_LISTS, devices);
-				try{
-					intent.putExtra(PilihKehamilanActivity.KEHAMILAN_DIPILIH, kehamilan.toString());
-					intent.putExtra(SelectIbuActivity.NAMA_IBU, namaIbu);
-				}catch(NullPointerException ex){}
-				
-				intent.putExtra(DEVICE_UUID, mDeviceUUID.toString());
-				intent.putExtra(BUFFER_SIZE, mBufferSize);
-				startActivity(intent);
-				}
-			}
-		});
+		
 		/*mBtnConnect.setOnClickListener(new OnClickListener() {
 			
 			@Override

@@ -45,38 +45,41 @@ public class IbuActivity extends Activity {
 	public final static String FORM_KUNJUNGAN_TOKEN_URL = "/ws/ui/form/form-bumil-kunjungan?aksi=p&format=json";
 	public final static String FORM_ACTION = "/ws/bumil/kunjungan/";
 	private ProgressDialog pd;
-	private Button mBtnHbManual;
-	private Button buttonManualBerat;
-	private Button buttonManualTinggi;
-	private Button buttonManualLila;
-	private Button buttonIbuSet;
-	private Button buttonSimpan;
-	private TextView labelIbu;
-	private EditText editHb;
-	private EditText editTextLila;
-	private EditText editTextTinggi;
-	private EditText editTextBerat;
-	private ProgressDialog progressDialog;
-	private UUID mDeviceUUID;
-	private Activity activity;
-	private int selectedDevice;
-	private HashMap<String, EditText> maps;
-	private List<Runnable> readThreads;
-	private ArrayList<BluetoothDevice> devices;
-	private ArrayList<BluetoothSocket> sockets;
-	private boolean exitOnDisconect = true;
-	private boolean isLogedIn = false;
-	private String sessid;
-	private String token;
-	private boolean kakiBengkak;
-	private JSONArray kehamilan;
+	protected Button mBtnHbManual;
+	protected Button buttonManualBerat;
+	protected Button buttonManualTinggi;
+	protected Button buttonManualLila;
+	protected Button buttonIbuSet;
+	protected Button buttonSimpan;
+	protected TextView labelIbu;
+	protected TextView labelTinggi;
+	protected TextView LabelNama;
+	protected EditText editHb;
+	protected EditText editTextLila;
+	protected EditText editTextTinggi;
+	protected EditText editTextBerat;
+	protected EditText editTextNama;
+	protected ProgressDialog progressDialog;
+	protected UUID mDeviceUUID;
+	protected Activity activity;
+	protected int selectedDevice;
+	protected HashMap<String, EditText> maps;
+	protected List<Runnable> readThreads;
+	protected ArrayList<BluetoothDevice> devices;
+	protected ArrayList<BluetoothSocket> sockets;
+	protected boolean exitOnDisconect = true;
+	protected boolean isLogedIn = false;
+	protected String sessid;
+	protected String token;
+	protected boolean kakiBengkak;
+	protected JSONArray kehamilan;
 	SharedPreferences prefs;
 	@Override
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
 		for(int i=readThreads.size()-1;i>=0;i--){
-			ReadInput u = (ReadInput)readThreads.get(i);
-			u.stop();
+			ReadInput2 u = (ReadInput2)readThreads.get(i);
+			u.setRunning(false);
 			readThreads.remove(u);
 		}
 		super.onBackPressed();
@@ -94,13 +97,10 @@ public class IbuActivity extends Activity {
 		sockets = new ArrayList<BluetoothSocket>();
 		Bundle b = intent.getExtras();
 		labelIbu = (TextView)findViewById(R.id.textView2);
-		labelIbu.setText(b.getString(SelectIbuActivity.NAMA_IBU));
+		LabelNama = (TextView)findViewById(R.id.textNama);
+		labelTinggi = (TextView)findViewById(R.id.textTinggi);
 		activity = this;
-		maps = new HashMap<String, EditText>();
-		maps.put("S", editTextBerat);
-		maps.put("BB", editTextBerat);
-		maps.put("BI", editTextBerat);
-		maps.put("LL", editTextLila);
+		
 		editHb = (EditText) findViewById(R.id.editHb);
 		mBtnHbManual = (Button) findViewById(R.id.buttonManualHb);
 		buttonManualBerat = (Button) findViewById(R.id.buttonManualBerat);
@@ -108,14 +108,28 @@ public class IbuActivity extends Activity {
 		buttonIbuSet = (Button) findViewById(R.id.buttonIbuSet);
 		buttonSimpan = (Button) findViewById(R.id.buttonSimpan);
 		editHb = (EditText) findViewById(R.id.editHb);
+		editTextNama = (EditText)findViewById(R.id.editTextNama);
 		editTextLila = (EditText) findViewById(R.id.editTextLila);
 		editTextBerat = (EditText) findViewById(R.id.editTextBerat);
+		editTextTinggi = (EditText)findViewById(R.id.editTextTinggi);
 		mDeviceUUID = UUID.fromString(b.getString(Homescreen.DEVICE_UUID));
 		devices = b.getParcelableArrayList(Homescreen.DEVICES_LISTS);
+		
+		LabelNama.setVisibility(View.GONE);
+		editTextNama.setVisibility(View.GONE);
+		maps = new HashMap<String, EditText>();
+		maps.put("S", editTextBerat);
+		maps.put("BB", editTextBerat);
+		maps.put("BI", editTextBerat);
+		maps.put("LL", editTextLila);
 		try {
 			kehamilan = new JSONArray(b.getString(PilihKehamilanActivity.KEHAMILAN_DIPILIH));
+			labelIbu.setText(b.getString(SelectIbuActivity.NAMA_IBU));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (NullPointerException e){
 			e.printStackTrace();
 		}
 		mBtnHbManual.setOnClickListener(new OnClickListener() {
@@ -158,16 +172,16 @@ public class IbuActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				for(int i=readThreads.size()-1;i>=0;i--){
-					ReadInput u = (ReadInput)readThreads.get(i);
-					u.stop();
+					ReadInput2 u = (ReadInput2)readThreads.get(i);
+					u.setRunning(false);
 					readThreads.remove(u);
 				}
 			}
 		});
 		//new loginTask().execute();
         IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-        
-        this.registerReceiver(mReceiver, filter3);
+        //this.registerReceiver(mReceiver, filter3);
+        if(devices.size()>0)
         new ConnectBt2Task().execute();
 		/*for(int i=0;i<devices.size();i++){
 			new ConnectBT(devices.get(i)).execute();
@@ -286,7 +300,12 @@ public class IbuActivity extends Activity {
 		public void run() {
 			
 			while(running){
+				try{
 				BluetoothDevice devX = devices.get(selectedDevice);
+				}catch(ArrayIndexOutOfBoundsException ex){
+					ex.printStackTrace();
+					break;
+				}
 				int errorCount = 0;
 				OutputStream os=null;
 				InputStream is=null;
@@ -555,14 +574,18 @@ public class IbuActivity extends Activity {
 		}
 
 	}
-	private class GetToken extends AsyncTask<Void, Void, Void>{
+	protected class GetToken extends AsyncTask<Void, Void, Void>{
 		JSONObject rr;
 		String strMessage;
+		protected String tokenUrl;
+		public GetToken() {
+			tokenUrl = IbuActivity.FORM_KUNJUNGAN_TOKEN_URL;
+		}
 		@Override
 		protected Void doInBackground(Void... params) {
 			// TODO Auto-generated method stub
 			try {
-				JSONObject form = (JSONObject) HttpClient.SendHttpGet(prefs.getString(PreferencesEditor.SERVER_URL, "")+IbuActivity.FORM_KUNJUNGAN_TOKEN_URL);
+				JSONObject form = (JSONObject) HttpClient.SendHttpGet(prefs.getString(PreferencesEditor.SERVER_URL, "")+tokenUrl);
 				Log.i("JSON",form.toString());
 				sessid = form.getString("sessid");
 				token = form.getString("token");
@@ -588,8 +611,12 @@ public class IbuActivity extends Activity {
 			super.onPostExecute(result);
 		}
 	}
-	private class SendData extends AsyncTask<Void, Void, Void>{
-
+	protected class SendData extends AsyncTask<Void, Void, Void>{
+		JSONObject o = new JSONObject();
+		protected String submitUrl;
+		public SendData() {
+			submitUrl = IbuActivity.FORM_ACTION;
+		}
 		@Override
 		protected void onPreExecute() {
 			// TODO Auto-generated method stub
@@ -605,12 +632,12 @@ public class IbuActivity extends Activity {
 		@Override
 		protected Void doInBackground(Void... params) {
 			// TODO Auto-generated method stub
-			JSONObject o = new JSONObject();
+			
 			try {
 				o.put("token", token);
 				o.put("kaki_bengkak", kakiBengkak?"1":"2");
 				o.put("berat", editTextBerat.getText());
-				l = (JSONObject)HttpClient.SendHttpPost(prefs.getString(PreferencesEditor.SERVER_URL, "")+IbuActivity.FORM_ACTION+kehamilan.getString(0), o);
+				l = (JSONObject)HttpClient.SendHttpPost(prefs.getString(PreferencesEditor.SERVER_URL, "")+submitUrl+kehamilan.getString(0), o);
 				
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block

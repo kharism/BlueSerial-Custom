@@ -20,6 +20,7 @@ public class SelectModeActivity extends Activity {
 	SharedPreferences prefs;
 	public static String BUMIL="/gia/bumil/lihat";
 	public static String ANAK="/gia/anak/lihat";
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -53,6 +54,14 @@ public class SelectModeActivity extends Activity {
 				Intent i =new Intent(getApplicationContext(), WebActivity.class);
 				Log.i("BROWSING",prefs.getString(PreferencesEditor.SERVER_URL, "")+ANAK);
 				i.putExtra(WebActivity.WEB_URL, prefs.getString(PreferencesEditor.SERVER_URL, "")+ANAK);
+				startActivity(i);
+			}
+		});
+		selectTambahIbu.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				Intent i = new Intent(getApplicationContext(),Homescreen.class);
+				i.putExtra(RegistrasiIbu.REGISTRASI_IBU, " ");
 				startActivity(i);
 			}
 		});

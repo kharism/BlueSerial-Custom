@@ -349,8 +349,7 @@ public class ActivityAnak extends Activity {
 
 		@Override
 		public void onReceive(Context arg0, Intent arg1) {
-			// TODO Auto-generated method stub
-	        String action = arg1.getAction();
+			String action = arg1.getAction();
 			final BluetoothDevice device = arg1.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 	        if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)){
 	        	AlertDialog.Builder builder = new AlertDialog.Builder(activity);

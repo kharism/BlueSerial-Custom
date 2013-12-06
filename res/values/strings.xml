@@ -26,5 +26,27 @@
     <string name="title_activity_preferences_editor">PreferencesEditor</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_web">WebActivity</string>
-
+	<string-array name="pekerjaan_ibu">
+	    <item>Tidak Sekolah</item>
+	    <item>Sekolah Dasar</item>
+	    <item>SMP</item>
+	    <item>SMA/SMK</item>
+	    <item>S1</item>
+	    <item>S2</item>
+	    <item>S3</item>
+	    <item>Tidak Tahu</item>
+	</string-array>
+	<string-array name="agama">
+	    <item>islam</item>
+	    <item>hindu</item>
+	    <item>budha</item>
+	    <item>kristen katholik</item>
+	    <item>kristen protestan</item>
+	</string-array>
+	<string-array name="darah">
+	    <item>A</item>
+	    <item>B</item>
+	    <item>AB</item>
+	    <item>O</item>
+	</string-array>
 </resources>
