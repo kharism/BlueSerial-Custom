@@ -33,8 +33,9 @@ public final class R {
         public static final int logo=0x7f020002;
     }
     public static final class id {
-        public static final int action_calibrate_tinggi=0x7f0a006d;
-        public static final int action_remove_item=0x7f0a006e;
+        public static final int action_batery_level=0x7f0a006d;
+        public static final int action_calibrate_tinggi=0x7f0a006e;
+        public static final int action_remove_item=0x7f0a006f;
         public static final int action_settings=0x7f0a006c;
         public static final int btnClear=0x7f0a004e;
         public static final int btnClearInput=0x7f0a0046;

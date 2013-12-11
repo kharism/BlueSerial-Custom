@@ -7,6 +7,7 @@
 package com.blueserial;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -429,7 +430,7 @@ public class Homescreen extends Activity {
 				BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
 				mBTSocket.connect();
 				OutputStream os = mBTSocket.getOutputStream();
-				byte[] buff ="SET AWAL\r\n".getBytes("ASCII"); 
+				byte[] buff ="SA\r\n".getBytes("ASCII"); 
 				os.write(buff);				
 				os.close();
 				mBTSocket.close();
@@ -454,8 +455,6 @@ public class Homescreen extends Activity {
 				e.printStackTrace();
 				mes = e.getMessage();
 			}
-			
-			
 			return null;
 		}
 		@Override
@@ -544,6 +543,81 @@ public class Homescreen extends Activity {
 		}
 
 	}
+	
+	private class GetBateryLevelTask extends AsyncTask<Void, Void, Void>{
+		BluetoothDevice bd;
+		String mes;
+		public GetBateryLevelTask(BluetoothDevice d) {
+			bd = d;
+		}
+		@Override
+		protected Void doInBackground(Void... params) {
+			BluetoothSocket mBTSocket;
+			Method m;
+			try {
+				m = bd.getClass().getMethod("createRfcommSocket", new Class[] {int.class});
+				mBTSocket = (BluetoothSocket) m.invoke(bd, 1);
+				BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
+				mBTSocket.connect();
+				OutputStream os = mBTSocket.getOutputStream();
+				InputStream is = mBTSocket.getInputStream();
+				byte[] buff ="BL\r\n".getBytes("ASCII"); 
+				os.write(buff);				
+				buff = new byte[100];
+				try {
+					Thread.sleep(400);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				int h=0;
+				while(h<100){
+					if(is.available()>0){
+						int gg = is.read();
+						buff[h] = (byte)gg;
+						h++;
+						if(gg=='\n')break;
+					}
+					else break;
+				}
+				String res = new String(buff);
+				mes = res.substring(0, h);
+				is.close();
+				os.close();
+				mBTSocket.close();
+				runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						Toast.makeText(getApplicationContext(), mes, Toast.LENGTH_SHORT).show();
+					}
+				});
+			} catch (NoSuchMethodException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				mes = e.getMessage();
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				mes = e.getMessage();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				mes = e.getMessage();
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				mes = e.getMessage();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				mes = e.getMessage();
+			}
+			return null;			
+		}
+		
+	}
 
 	/**
 	 * Custom adapter to show the current devices in the list. This is a bit of an overkill for this 
@@ -615,9 +689,7 @@ public class Homescreen extends Activity {
 			if (convertView == null) {
 				vi = LayoutInflater.from(context).inflate(R.layout.list_item, null);
 				holder = new ViewHolder();
-
 				holder.tv = (TextView) vi.findViewById(R.id.lstContent);
-
 				vi.setTag(holder);
 			} else {
 				holder = (ViewHolder) vi.getTag();
@@ -650,6 +722,11 @@ public class Homescreen extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+		case R.id.action_batery_level:
+			BluetoothDevice selected2 = ((MyAdapter)mLstDevices.getAdapter()).getSelectedItem();
+			GetBateryLevelTask t2 = new GetBateryLevelTask(selected2);
+			t2.execute();
+			break;
 		case R.id.action_settings:
 			Intent intent = new Intent(Homescreen.this, PreferencesActivity.class);
 			startActivityForResult(intent, SETTINGS);
@@ -660,9 +737,9 @@ public class Homescreen extends Activity {
 			t.execute();
 			break;
 		case R.id.action_remove_item:
-			BluetoothDevice selected2 = ((MyAdapter)mLstDevices.getAdapter()).getSelectedItem();
+			BluetoothDevice selected3 = ((MyAdapter)mLstDevices.getAdapter()).getSelectedItem();
 			MyAdapter adapter = (MyAdapter) mLstDevices.getAdapter();
-			adapter.remove(selected2);
+			adapter.remove(selected3);
 			adapter.notifyDataSetChanged();
 			break;
 		}

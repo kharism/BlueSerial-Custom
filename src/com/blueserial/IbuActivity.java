@@ -322,8 +322,8 @@ public class IbuActivity extends Activity {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}*/
-					Log.i("Senfing Message","GET NILAI\r\n");
-					os.write("GET NILAI\r\n".getBytes("ASCII"));
+					Log.i("Senfing Message","GN\r\n");
+					os.write("GN\r\n".getBytes("ASCII"));
 					byte[] buff = new byte[256];
 
 					try {
@@ -343,7 +343,7 @@ public class IbuActivity extends Activity {
 					
 					try {
 						//Thread.sleep(500);
-						os.write("STOP\r\n".getBytes("ASCII"));
+						os.write("ST\r\n".getBytes("ASCII"));
 						//is.reset();
 						//is.close();
 						//os.close();
