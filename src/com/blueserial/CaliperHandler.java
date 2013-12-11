@@ -9,19 +9,11 @@ public class CaliperHandler extends AbstractHandler {
 	public String Handle(String a) {
 		// TODO Auto-generated method stub
 		try{
-		String[] p = a.split("\\s");
-		String number = p[2];
+		String[] p = a.split("(\\s)+");
+		String number = p[1];
 		if(number.isEmpty())
-			number = p[3];
-		int len = number.length()-1;
-		String comma = String.valueOf(number.charAt(len-1))+String.valueOf(number.charAt(len));
-		len -=2;
-		String mm;
-		if(len==0)
-			mm = String.valueOf(number.charAt(0));
-		else
-			mm = String.valueOf(number.charAt(0))+String.valueOf(number.charAt(len));
-		return mm+"."+comma;
+			number = p[2];
+		return number;
 		}catch(Exception ex){
 			return "";
 		}
