@@ -3,6 +3,7 @@ package com.blueserial;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -85,6 +87,8 @@ public class ActivityAnak extends Activity {
 	private boolean isLogedIn;
 	private String sessid;
 	private String editToken;
+	List<String> failedDevices;
+	
 	private JSONObject anak;
 	SharedPreferences prefs;
 	@Override
@@ -289,6 +293,9 @@ public class ActivityAnak extends Activity {
 		}*/
 	}
 	private class ConnectBt2Task extends AsyncTask<Void, Void, Void>{
+		public ConnectBt2Task() {
+			failedDevices = new ArrayList<String>();
+		}
 		@Override
 		protected void onPreExecute() {
 			int loopFail=0;
@@ -323,12 +330,14 @@ public class ActivityAnak extends Activity {
 						loopFail=0;
 						Log.i("CONNECTION ERROR", "kebacut suwi device "+devices.get(i).getName()+" gagal koneksi, lanjut gan");
 						Toast.makeText(getApplicationContext(), "device "+devices.get(i).getName()+" gagal koneksi", Toast.LENGTH_SHORT);
+						failedDevices.add(devices.get(i).getName());						
 					}
-					Log.i("CONNECTION ERROR", "device "+devices.get(i).getName()+" gagal koneksi");
-					Toast.makeText(activity, "device "+devices.get(i).getName()+" gagal koneksi", Toast.LENGTH_SHORT);
+					//Log.i("CONNECTION ERROR", "device "+devices.get(i).getName()+" gagal koneksi");
+					//Toast.makeText(activity, "device "+devices.get(i).getName()+" gagal koneksi", Toast.LENGTH_SHORT);
 				}
 			}
 			int len = sockets.size();
+			
 			super.onPreExecute();
 		}
 		@Override
@@ -337,6 +346,14 @@ public class ActivityAnak extends Activity {
 			readThreads.add(rr);
 	        Thread t = new Thread(rr);
 	        t.run();
+	        if(failedDevices.size()>0)
+	        activity.runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					
+				}
+			});
 	        return null;
 		}
 		@Override
@@ -437,6 +454,12 @@ public class ActivityAnak extends Activity {
 		// TODO Auto-generated method stub
         IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
         this.registerReceiver(mReceiver, filter3);
+        maps.put("TB", editTextTinggi);
+		maps.put("S", editTextBerat);
+		maps.put("LE", editTextTricep);
+		maps.put("BB", editTextBerat);
+		maps.put("BI", editTextBerat);
+		maps.put("LL", editTextLila);
         if(prefs.contains("tinggi")){
 			String h = prefs.getString("tinggi", "");
 			editTextTinggi.setText(h);
@@ -473,7 +496,7 @@ public class ActivityAnak extends Activity {
 			try {
 				o.put("token", editToken);
 				Date date = new Date();
-				o.put("tanggal", date.getMonth()+"/"+date.getDate()+"/"+date.getYear());
+				//o.put("tanggal", date.getMonth()+"/"+date.getDate()+"/"+date.getYear());
 				o.put("bb", editTextBerat.getText());
 				o.put("tb", editTextTinggi.getText());
 				o.put("pengukuran", berdiri?"BERDIRI":"TERLENTANG");
@@ -617,6 +640,16 @@ public class ActivityAnak extends Activity {
 		boolean running;
 		public void setRunning(boolean run){
 			running = run;
+			if(!run){
+				for(int i=0;i<sockets.size();i++){
+					try {
+						sockets.get(i).close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
 		}
 		public ReadInput2() {
 			
@@ -629,7 +662,18 @@ public class ActivityAnak extends Activity {
 		}
 		@Override
 		public void run() {
-			
+			if(failedDevices.size()>0)
+			activity.runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					String j = "";
+					for(int i=0;i<failedDevices.size();i++){
+						j+=failedDevices.get(i)+",";
+					}
+					Toast.makeText(getApplicationContext(), "device "+j+" gagal koneksi", Toast.LENGTH_SHORT).show();
+				}
+			});
 			while(running){
 				BluetoothDevice devX = devices.get(selectedDevice);
 				int errorCount = 0;
@@ -639,8 +683,17 @@ public class ActivityAnak extends Activity {
 				try {
 					mBTSocket = sockets.get(selectedDevice);
 					BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
+					if(!mBTSocket.isConnected())
+						mBTSocket.connect();
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					os = mBTSocket.getOutputStream();
 					is = mBTSocket.getInputStream();
+					
 					/*os.write("SET AWAL\r\n".getBytes("ASCII"));
 					try {
 						Thread.sleep(2500);
@@ -648,23 +701,41 @@ public class ActivityAnak extends Activity {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}*/
-					Log.i("Senfing Message","GN\r\n");
-					os.write("GN\r\n".getBytes("ASCII"));
-					byte[] buff = new byte[256];
-
+					Log.i("Sending Message","GN\n");
+					try{
+						os.write("GN\n".getBytes("ASCII"));
+					}catch(IOException e){
+						
+					}
+					byte[] buff = new byte[1024];
+					//byte[] buff2 = new byte[1000];
 					try {
-						Thread.sleep(300);
+						Thread.sleep(500);
 					} catch (InterruptedException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
-					}
-					int buffIdx=0;
-					while(buffIdx<256){
-						if(is.available()>0){
-						int c = is.read();
-						buff[buffIdx] = (byte)c;
-						buffIdx++;
 						}
+					
+					int buffIdx=0;
+					/*while(buffIdx<buff.length-1)
+					{
+						try {
+							
+							if(is.available()>0){
+							int c = is.read();
+							buff[buffIdx] = (byte)c;
+							
+							buffIdx++;
+							}
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							continue;
+						}
+					}*/
+					if(is.available()>0){
+						buffIdx = is.available();
+						is.read(buff);
 					}
 					
 					try {
@@ -676,61 +747,53 @@ public class ActivityAnak extends Activity {
 						//mBTSocket.close();
 						
 					} catch (IOException e) {
+						if(e!=null)
 						e.printStackTrace();
 					} /*catch (InterruptedException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}*/
-					selectedDevice = (selectedDevice+1)%sockets.size();
-					int i = 0;
-					for (i = 0; i < buff.length && buff[i] != 0; i++) {
+					final String hh  = new String(buff);
+					String[] lines = hh.split("\r\n");
+					int g=lines.length-1;
+					if(!Pattern.matches("[a-zA-Z]*(\\s)+(\\.|[0-9])*(\\s)*[a-zA-Z]*\\r(\\n)*", lines[g]))
+					{
+						g--;
 					}
-					final String strInput = new String(buff, 0, i);
-					int g=0;
-					String[] lines = strInput.split("\r\n");
-					try{							
-						String gt = lines[g].split("\\s")[0];
-						if(lines[g].isEmpty()|| !maps.containsKey(gt))
-						{
-							g++;
-						}
-						
-						String ll = new String(lines[g].split("\\s")[0]);
-						final EditText curr = maps.get(ll);
-						curr.post(new Runnable() {
-						
-						@Override
-						public void run() {
-							Log.i("SENSOR", strInput);
-							String j = sh.Handle(strInput);
-							if(!j.isEmpty())
-							curr.setText(j);
-						}
-					});
-					break;	
-				}
-					catch(Exception ex){
-						ex.printStackTrace();
+					String gt = lines[g].split("\\s")[0];
+					while(lines[g].isEmpty()|| !maps.containsKey(gt))
+					{
+						g++;
+						if(g==lines.length)
+							break;
+						gt = lines[g].split("\\s")[0];
 					}
-				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					errorCount++;
-					e.printStackTrace();
-					if(errorCount>9){
-						break;
-					}else{
+					if(g==lines.length)
 						continue;
-					}					
-				}
-			
-			}
-			for(int i=0;i<sockets.size();i++){
-				try {
-					sockets.get(i).close();
-				} catch (IOException e) {
+					String ll = new String(lines[g].split("\\s")[0]);
+					final EditText curr = maps.get(ll);
+					if(curr==null)
+						continue;
+					curr.post(new Runnable() {
+					
+					@Override
+					public void run() {
+						Log.i("SENSOR", hh);
+						String j = sh.Handle(hh);
+						Log.i("VALID DATA",j);
+						if(!j.isEmpty())
+						curr.setText(j);
+					}
+				});
+					selectedDevice = (selectedDevice+1)%sockets.size();
+					
+				} catch (UnsupportedEncodingException e2) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					e2.printStackTrace();
+				} catch (IOException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+					break;
 				}
 			}
 			
@@ -909,6 +972,5 @@ public class ActivityAnak extends Activity {
 				finish();
 			}
 		}
-
 	}
 }

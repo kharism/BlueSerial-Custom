@@ -9,10 +9,12 @@ public class TinggiHandler extends AbstractHandler {
 	 */
 	public String Handle(String a) {
 		// TODO Auto-generated method stub
-		try{String[] p = a.split(" ");
-		nilai = p[3];
-		Satuan = p[4];
-		return nilai;}
+		try{String[] p = a.split("(\\s)+");
+		nilai = p[1];
+		double h = Double.parseDouble(nilai);
+		Satuan = p[2];
+		String jj = String.valueOf(h); 
+		return jj;}
 		catch(Exception ex){
 			return "";
 		}

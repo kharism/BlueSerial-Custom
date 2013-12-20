@@ -6,8 +6,9 @@ public class BIHandler extends AbstractHandler {
 	public String Handle(String a) {
 		try{
 			String[] p = a.split("(\\s)+");
-			if(Double.parseDouble(p[1])!=0)
-				return p[1];
+			String[] q = p[1].split("\\.");
+			if(Double.parseDouble(q[1]+"."+q[2])!=0)
+				return q[1]+"."+q[2];
 			else
 				return "";
 		}

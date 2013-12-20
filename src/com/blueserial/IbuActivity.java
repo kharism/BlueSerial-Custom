@@ -259,6 +259,7 @@ public class IbuActivity extends Activity {
 			break;
 		}
 	}
+	
 	private final BroadcastReceiver mReceiver = new BroadcastReceiver(){
 
 		@Override
@@ -286,6 +287,16 @@ public class IbuActivity extends Activity {
 		boolean running;
 		public void setRunning(boolean run){
 			running = run;
+			if(!run){
+				for(int i=0;i<sockets.size();i++){
+					try {
+						sockets.get(i).close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
 		}
 		public ReadInput2() {
 			
@@ -313,6 +324,14 @@ public class IbuActivity extends Activity {
 				try {
 					mBTSocket = sockets.get(selectedDevice);
 					BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
+					if(!mBTSocket.isConnected())
+						mBTSocket.connect();
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					os = mBTSocket.getOutputStream();
 					is = mBTSocket.getInputStream();
 					/*os.write("SET AWAL\r\n".getBytes("ASCII"));
@@ -398,15 +417,7 @@ public class IbuActivity extends Activity {
 					}					
 				}
 			
-			}
-			for(int i=0;i<sockets.size();i++){
-				try {
-					sockets.get(i).close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+			}		
 			
 		}
 	}

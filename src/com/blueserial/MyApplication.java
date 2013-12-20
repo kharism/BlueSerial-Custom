@@ -8,12 +8,14 @@ package com.blueserial;
 
 import java.util.ArrayList;
 
-
+import org.apache.http.client.CookieStore;
+import org.apache.http.cookie.Cookie;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
@@ -26,6 +28,7 @@ import android.webkit.CookieSyncManager;
 public class MyApplication extends Application{
 	private ArrayList<BluetoothDevice> staticDevList;
 	private ArrayList<Short> staticRSID;
+	private CookieStore globalCookie = new BasicCookieStore();
 	private static final DefaultHttpClient client = createClient();
 	@Override
 	public void onCreate() {
@@ -47,6 +50,14 @@ public class MyApplication extends Application{
         DefaultHttpClient httpclient = new DefaultHttpClient(cm, params);
         httpclient.getCookieStore().getCookies();
         return httpclient;
+	}
+	public CookieStore getCookieStore(){
+		if(globalCookie==null)
+			globalCookie = new BasicCookieStore();
+		return globalCookie;
+	}
+	public void setCookieStore(CookieStore f){
+		globalCookie = f;
 	}
 	public ArrayList<BluetoothDevice> getStaticDevList() {
 		return staticDevList;

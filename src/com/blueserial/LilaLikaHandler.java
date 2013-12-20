@@ -12,9 +12,13 @@ public class LilaLikaHandler extends AbstractHandler{
 	public String Handle(String a) {
 		// TODO Auto-generated method stub
 				try{
-					String[] p = a.split("\\s");
-					if(Double.parseDouble(p[p.length-2])!=0)
-						return p[p.length-2];
+					String[] p = a.split("(\\s)+");
+					if(Double.parseDouble(p[p.length-2])!=0){
+						double h = Double.parseDouble(p[p.length-2]);
+						h = h+7.0;
+						return String.valueOf(h);
+					}
+						
 					else
 						return "";
 				}

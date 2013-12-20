@@ -98,6 +98,7 @@ public class LoginActivity extends Activity {
 			login.put("username", editUsername.getText().toString());
 			login.put("password", editPassword.getText().toString());
 			JSONObject o = new JSONObject(login);
+			HttpClient.cookieStore = ((MyApplication)getApplication()).getCookieStore();
 			rr = (JSONObject)HttpClient.SendHttpPost(prefs.getString(PreferencesEditor.SERVER_URL, "")+SelectIbuActivity.LOGIN_IBU, o);
 			
 			try {

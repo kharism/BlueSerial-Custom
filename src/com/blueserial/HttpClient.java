@@ -38,7 +38,7 @@ import android.webkit.CookieSyncManager;
 public class HttpClient {
 	private static final String TAG = "HttpClient";
 	private static ArrayList<Header> headers;
-	private static CookieStore cookieStore = new BasicCookieStore();
+	public static CookieStore cookieStore = new BasicCookieStore();
 	public static DefaultHttpClient httpclient = MyApplication.getClient();
 	public static Object SendHttpPost(String URL, JSONObject jsonObjSend) {
 		try {

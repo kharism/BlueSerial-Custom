@@ -12,7 +12,7 @@ public class StringHandler {
 	private Map<String,AbstractHandler> mHandlers;
 	public StringHandler(){
 		mHandlers = new HashMap<String, AbstractHandler>();
-		mHandlers.put("T", new TinggiHandler());
+		mHandlers.put("TB", new TinggiHandler());
 		mHandlers.put("S", new BeratHandler());
 		mHandlers.put("LL", new LilaLikaHandler());
 		mHandlers.put("LE", new CaliperHandler());

@@ -19,10 +19,10 @@ public class BBeratHandler extends AbstractHandler {
 		try{
 			Log.i("BBerat", a);
 			Log.i("Len", String.valueOf(a.length()));
-			if(a.length()<12){
+			if(a.length()<10){
 				return "";
 			}
-			if(Pattern.matches("BB(\\s)+[0-9]*.[0-9]*(\\s)+gr(\\s)+1", a))
+			if(Pattern.matches("BB(\\s)+[0-9]*(\\s)+gr(\\s)*", a))
 			{
 				String[] p = a.split("(\\s)+");
 				data = p[1];
